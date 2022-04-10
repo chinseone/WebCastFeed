@@ -6,7 +6,7 @@ using WebCastFeed.Operations;
 
 namespace WebCastFeed.Controllers
 {
-    [Route("v1")]
+    [Route("v1/douyin")]
     [ApiController]
     public class DouyinFeedController : Controller
     {
@@ -23,7 +23,7 @@ namespace WebCastFeed.Controllers
             return "healthy";
         }
 
-        [HttpPost("webhook")]
+        [HttpPost("webhook-validation")]
         [Consumes("application/json")]
         public ValueTask<string> ValidateDouyinWebhook(
             [FromBody]DouyinWebhookValidationModel input,

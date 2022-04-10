@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "v1/health",
+      "launchUrl": "v1/douyin/health",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
     "WebCastFeed": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "v1/health",
+      "launchUrl": "v1/douyin/health",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -29,7 +29,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/v1/health",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/v1/douyin/health",
       "publishAllPorts": true,
       "useSSL": true
     }
