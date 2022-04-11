@@ -42,6 +42,4 @@ jobs:
         repository: 'xiugou-tke-ns1/xiugou-docker-repo'
         dockerfile: './WebCastFeed/Dockerfile'
         push: ${{ github.ref == 'refs/heads/main' }}
-        tags: ${{env.commitmsg}}
         tag_with_sha: true
-        tag_with_ref: true
