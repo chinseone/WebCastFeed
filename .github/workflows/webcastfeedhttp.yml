@@ -41,7 +41,7 @@ jobs:
         registry: 'ccr.ccs.tencentyun.com'
         repository: 'xiugou-tke-ns1/xiugou-docker-repo'
         dockerfile: './WebCastFeed/Dockerfile'
-        push: ${{secrets.IS_CN_ROBLOX_COM == 'true'}}
+        push: ${{ github.ref == 'refs/heads/main' }}
         tags: ${{env.commitmsg}}
         tag_with_sha: true
         tag_with_ref: true
