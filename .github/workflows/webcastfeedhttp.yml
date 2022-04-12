@@ -26,6 +26,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./src/Services/WebCastFeed/WebCastFeed.sln
     - name: Build
+      run: dotnet build ./src/Services/WebCastFeed/WebCastFeed.sln --configuration Release --no-restore
     - name: Tests
       run: dotnet test ./src/Services/WebCastFeed/WebCastFeed.sln --no-restore --verbosity normal
     - name: Extract branch name
