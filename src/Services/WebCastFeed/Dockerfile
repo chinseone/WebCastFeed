@@ -7,8 +7,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["WebCastFeed/WebCastFeed.csproj", "WebCastFeed/"]
-RUN dotnet restore "WebCastFeed/WebCastFeed.csproj"
+COPY ["WebCastFeed.csproj", "WebCastFeed/"]
+RUN dotnet restore "WebCastFeed.csproj"
 COPY . .
 WORKDIR "/src/WebCastFeed"
 RUN dotnet build "WebCastFeed.csproj" -c Release -o /app/build
