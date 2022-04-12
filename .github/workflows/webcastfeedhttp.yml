@@ -38,8 +38,8 @@ jobs:
       with:
         username: '${{ secrets.TC_DOCKER_USERNAME }}'
         password: '${{ secrets.TC_DOCKER_PASSWORD  }}'
-        registry: 'xiugou-docker-sh.tencentcloudcr.com'
-        repository: 'xiugou-docker-ns/xiugou-docker-repo'
+        registry: 'xiugou-docker-hk.tencentcloudcr.com'
+        repository: 'ns-hk/repository'
         dockerfile: './WebCastFeed/Dockerfile'
         push: ${{ github.ref == 'refs/heads/main' }}
         tag_with_sha: true
