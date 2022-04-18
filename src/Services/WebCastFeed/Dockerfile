@@ -14,7 +14,7 @@ WORKDIR "/src/WebCastFeed"
 RUN dotnet build "WebCastFeed.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "/src/Services/WebCastFeed/WebCastFeed.csproj" -c Release -o /app/publish
+RUN dotnet publish "WebCastFeed.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
