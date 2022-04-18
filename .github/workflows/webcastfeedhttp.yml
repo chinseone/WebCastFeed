@@ -24,11 +24,11 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
     - name: Install dependencies
-      run: dotnet restore ./WebCastFeed.sln
+      run: dotnet restore ./src/Services/WebCastFeed/WebCastFeed.sln
     - name: Build
-      run: dotnet build ./WebCastFeed.sln --configuration Release --no-restore
+      run: dotnet build ./src/Services/WebCastFeed/WebCastFeed.sln --configuration Release --no-restore
     - name: Tests
-      run: dotnet test ./WebCastFeed.sln --no-restore --verbosity normal
+      run: dotnet test ./src/Services/WebCastFeed/WebCastFeed.sln --no-restore --verbosity normal
     - name: Extract branch name
       shell: bash
       run: echo "##[set-output name=branch;]$(echo $GITHUB_REF#refs/heads/})"
@@ -40,6 +40,6 @@ jobs:
         password: '${{ secrets.TC_DOCKER_PASSWORD  }}'
         registry: 'xiugou-docker-hk.tencentcloudcr.com'
         repository: 'ns-hk/repository'
-        dockerfile: './WebCastFeed/Dockerfile'
+        dockerfile: './src/Services/WebCastFeed/Dockerfile'
         push: ${{ github.ref == 'refs/heads/main' }}
         tag_with_sha: true
