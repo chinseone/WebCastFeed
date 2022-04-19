@@ -36,7 +36,7 @@ namespace WebCastFeed.Controllers
             return Ok(res);
         }
 
-        [HttpPost("status")]
+        [HttpPost("state")]
         [Consumes("application/json")]
         public IActionResult UpdateTicket(
             [FromBody] UpdateTicketRequest input,
