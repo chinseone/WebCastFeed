@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Enums;
 using WebCastFeed.Models.Requests;
 using Xiugou.Entities.Entities;
-using Xiugou.Entities.Enums;
 
 namespace WebCastFeed.Operations
 {
     public class UpdateTicketOperation : IAsyncOperation<UpdateTicketRequest, bool>
     {
         private readonly IXiugouRepository _XiugouRepository;
-        private readonly Dictionary<TicketState, TicketState> TicketStateTransferMap = new Dictionary<TicketState, TicketState>
+        private readonly Dictionary<TicketState, TicketState> _TicketStateTransferMap 
+            = new Dictionary<TicketState, TicketState>
         {
             {TicketState.Initial, TicketState.Distributed},
             {TicketState.Distributed, TicketState.Claimed},
@@ -45,7 +44,7 @@ namespace WebCastFeed.Operations
             };
             var toState = GetTicketCurrentState(toTicket);
 
-            if(TicketStateTransferMap[fromState] != toState)
+            if(_TicketStateTransferMap[fromState] != toState)
             {
                 return false;
             }
@@ -55,7 +54,7 @@ namespace WebCastFeed.Operations
             return true;
         }
 
-        private bool IsValidTicket(Ticket ticket)
+        private static bool IsValidTicket(Ticket ticket)
         {
             if(ticket == null)
             {
@@ -74,7 +73,7 @@ namespace WebCastFeed.Operations
                 || (ticket.IsDistributed && ticket.IsClaimed && ticket.IsActivated);
         }
 
-        private TicketState GetTicketCurrentState(Ticket ticket)
+        private static TicketState GetTicketCurrentState(Ticket ticket)
         {
             if (ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
             {
