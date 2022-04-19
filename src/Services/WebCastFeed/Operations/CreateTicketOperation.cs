@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Models.Requests;
@@ -10,6 +11,7 @@ namespace WebCastFeed.Operations
     public class CreateTicketOperation : IAsyncOperation<CreateTicketRequest, bool>
     {
         private readonly IXiugouRepository _XiugouRepository;
+        private const string _CharPool = "0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ";
 
         public CreateTicketOperation(IXiugouRepository xiugouRepository)
         {
@@ -18,11 +20,16 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<bool> ExecuteAsync(CreateTicketRequest input, CancellationToken cancellationToken = default)
         {
-            Enum.TryParse(input.TicketType, true, out TicketType ticketType);
+            var parseResult = Enum.TryParse(input.TicketType, true, out TicketType ticketType);
+
+            if (!parseResult)
+            {
+                return false;
+            }
 
             var ticket = new Ticket()
             {
-                Code = input.Code,
+                Code = GenerateTicketCode(),
                 IsActivated = false,
                 IsClaimed = false,
                 IsDistributed = false,
@@ -31,6 +38,21 @@ namespace WebCastFeed.Operations
 
             _XiugouRepository.Save(ticket);
             return true;
+        }
+
+        private string GenerateTicketCode()
+        {
+            var len = _CharPool.Length;
+            var result = new StringBuilder();
+
+            for(var i = 0; i < 6; i++)
+            {
+                var r = new Random(len);
+                var c = _CharPool[r.Next(0, len)];
+                result.Append(c);
+            }
+
+            return result.ToString();
         }
     }
 }

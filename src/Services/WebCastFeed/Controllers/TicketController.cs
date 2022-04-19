@@ -12,6 +12,7 @@ namespace WebCastFeed.Controllers
     public class TicketController : Controller
     {
         private readonly OperationExecutor _OperationExecutor;
+        private const string _FakeApiKey = "fake-api-key";
 
         public TicketController(OperationExecutor operationExecutor)
         {
@@ -20,11 +21,20 @@ namespace WebCastFeed.Controllers
 
         [HttpPost("")]
         [Consumes("application/json")]
-        public ValueTask<bool> CreateTicket(
+        public IActionResult CreateTicket(
             [FromBody]CreateTicketRequest input,
             [FromServices] CreateTicketOperation operation,
+            [FromHeader(Name="X-Ticket-Creation-Key")]string ticketCreationKey,
             CancellationToken cancellationToken)
-        => _OperationExecutor.ExecuteAsync<CreateTicketOperation,
-            CreateTicketRequest, bool>(operation, input, cancellationToken);
+        {
+            var key = Environment.GetEnvironmentVariable("TicketCreationKey") ?? _FakeApiKey;
+            if (string.IsNullOrEmpty(ticketCreationKey) || ticketCreationKey.Equals(_FakeApiKey) || !key.Equals(ticketCreationKey))
+            {
+                return BadRequest("Invalid TicketCreationKey");
+            }
+            var res = _OperationExecutor.ExecuteAsync<CreateTicketOperation,
+                CreateTicketRequest, bool>(operation, input, cancellationToken);
+            return Ok(res);
+        }
     }
 }
