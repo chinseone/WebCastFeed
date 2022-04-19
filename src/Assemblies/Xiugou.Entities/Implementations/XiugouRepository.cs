@@ -7,9 +7,9 @@ namespace Xiugou.Entities.Implementations
 {
     public class XiugouRepository : IXiugouRepository
     {
-        private readonly IXiugouDbContext _XiugouDbContext;
+        private readonly XiugouDbContext _XiugouDbContext;
 
-        public XiugouRepository(IXiugouDbContext xiugouDbContext)
+        public XiugouRepository(XiugouDbContext xiugouDbContext)
         {
             _XiugouDbContext = xiugouDbContext ?? throw new ArgumentNullException(nameof(xiugouDbContext));
         }
