@@ -36,5 +36,23 @@ namespace WebCastFeed.Controllers
                 CreateTicketRequest, bool>(operation, input, cancellationToken);
             return Ok(res);
         }
+
+        [HttpPost("status")]
+        [Consumes("application/json")]
+        public IActionResult UpdateTicket(
+            [FromBody] UpdateTicketRequest input,
+            [FromServices] UpdateTicketOperation operation,
+            [FromHeader(Name = "X-Ticket-Update-Key")] string ticketUpdateKey,
+            CancellationToken cancellationToken)
+        {
+            var key = Environment.GetEnvironmentVariable("TicketUpdateKey") ?? _FakeApiKey;
+            if (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey))
+            {
+                return BadRequest("Invalid TicketCreationKey");
+            }
+            var res = _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
+                UpdateTicketRequest, bool>(operation, input, cancellationToken);
+            return Ok(res);
+        }
     }
 }

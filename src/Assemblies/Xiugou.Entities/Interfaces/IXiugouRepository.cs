@@ -13,5 +13,7 @@ namespace Xiugou.Entities.Entities
         Task UpdateIsClaimed(Ticket ticket);
 
         Task UpdateIsActivated(Ticket ticket);
+
+        Task UpdateTicketState(Ticket ticket);
     }
 }

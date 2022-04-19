@@ -53,5 +53,16 @@ namespace Xiugou.Entities.Implementations
             entity.IsActivated = ticket.IsActivated;
             _XiugouDbContext.SaveChanges();
         }
+
+        public async Task UpdateTicketState(Ticket ticket)
+        {
+            var entity = await _XiugouDbContext.Tickets
+                .SingleOrDefaultAsync(e => e.Id == ticket.Id)
+                .ConfigureAwait(false);
+            entity.IsDistributed = ticket.IsDistributed;
+            entity.IsClaimed = ticket.IsClaimed;
+            entity.IsActivated = ticket.IsActivated;
+            _XiugouDbContext.SaveChanges();
+        }
     }
 }
