@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebCastFeed.Models.Requests;
 using WebCastFeed.Operations;
@@ -48,7 +47,7 @@ namespace WebCastFeed.Controllers
             var key = Environment.GetEnvironmentVariable("TicketUpdateKey") ?? _FakeApiKey;
             if (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey))
             {
-                return BadRequest("Invalid TicketCreationKey");
+                return BadRequest("Invalid TicketUpdateKey");
             }
             var res = _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
                 UpdateTicketRequest, bool>(operation, input, cancellationToken);
