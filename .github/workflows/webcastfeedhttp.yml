@@ -3,13 +3,13 @@ name: WebCastFeedHttpService
 on:
   push:
     paths:
-      - "Services/WebCastFeed/**"
-      - "Assemblies/**"
+      - "src/Services/WebCastFeed/**"
+      - "src/Assemblies/**"
       - ".github/workflows/webcastfeedhttp.yml"
   pull_request:
     paths:
-      - "Services/WebCastFeed/**"
-      - "Assemblies/**"
+      - "src/Services/WebCastFeed/**"
+      - "src/Assemblies/**"
       - ".github/workflows/webcastfeedhttp.yml"
 
 
