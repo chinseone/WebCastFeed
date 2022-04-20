@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\Response\" />
     <Folder Include="Models\Requests\" />
     <Folder Include="Enums\" />
   </ItemGroup>

@@ -2,6 +2,7 @@
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using WebCastFeed.Models.Requests;
+using WebCastFeed.Models.Response;
 using WebCastFeed.Operations;
 
 namespace WebCastFeed.Controllers
@@ -36,7 +37,7 @@ namespace WebCastFeed.Controllers
             return Ok(res);
         }
 
-        [HttpPost("status")]
+        [HttpPost("state")]
         [Consumes("application/json")]
         public IActionResult UpdateTicket(
             [FromBody] UpdateTicketRequest input,
@@ -47,10 +48,28 @@ namespace WebCastFeed.Controllers
             var key = Environment.GetEnvironmentVariable("TicketUpdateKey") ?? _FakeApiKey;
             if (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey))
             {
-                return BadRequest("Invalid TicketUpdateKey");
+                return Unauthorized("Invalid TicketUpdateKey");
             }
             var res = _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
                 UpdateTicketRequest, bool>(operation, input, cancellationToken);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        public IActionResult GetTicketByCode(
+            [FromQuery]string code,
+            [FromServices] GetTicketByCodeOperation operation,
+            [FromHeader(Name = "X-Ticket-Get-Key")] string ticketGetKey,
+            CancellationToken cancellationToken)
+        {
+            var key = Environment.GetEnvironmentVariable("TicketGetKey") ?? _FakeApiKey;
+            if (string.IsNullOrEmpty(ticketGetKey) || ticketGetKey.Equals(_FakeApiKey) || !key.Equals(ticketGetKey))
+            {
+                return Unauthorized("Invalid TicketGetKey");
+            }
+
+            var res = _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
+                string, GetTicketByCodeResponse>(operation, code, cancellationToken);
             return Ok(res);
         }
     }
