@@ -38,6 +38,7 @@ namespace WebCastFeed
             services.AddSingleton<HandleDouyinFeedOperation>();
             services.AddSingleton<CreateTicketOperation>();
             services.AddSingleton<UpdateTicketOperation>();
+            services.AddSingleton<GetTicketByCodeOperation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

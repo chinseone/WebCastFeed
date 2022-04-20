@@ -7,6 +7,7 @@ namespace Xiugou.Entities.Entities
     {
         public long Id { get; set; }
         public string Code { get; set; }
+        public string Event { get; set; }
         public TicketType TicketType { get; set; }
         public bool IsDistributed { get; set; }
         public bool IsClaimed { get; set; }

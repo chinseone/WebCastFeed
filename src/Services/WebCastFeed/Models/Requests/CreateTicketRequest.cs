@@ -6,5 +6,8 @@ namespace WebCastFeed.Models.Requests
     {
         [JsonPropertyName("type")]
         public string TicketType { get; set; }
+
+        [JsonPropertyName("event")]
+        public string Event { get; set; }
     }
 }

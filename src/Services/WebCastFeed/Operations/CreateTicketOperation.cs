@@ -27,9 +27,19 @@ namespace WebCastFeed.Operations
                 return false;
             }
 
+            var code = GenerateTicketCode();
+            var tempTicket = await _XiugouRepository.GetTicketByCode(code);
+
+            while (tempTicket != null)
+            {
+                code = GenerateTicketCode();
+                tempTicket = await _XiugouRepository.GetTicketByCode(code);
+            }
+
             var ticket = new Ticket()
             {
-                Code = GenerateTicketCode(),
+                Code = code,
+                Event = input.Event,
                 IsActivated = false,
                 IsClaimed = false,
                 IsDistributed = false,
@@ -37,6 +47,7 @@ namespace WebCastFeed.Operations
             };
 
             _XiugouRepository.Save(ticket);
+
             return true;
         }
 
