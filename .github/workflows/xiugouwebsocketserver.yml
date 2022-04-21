@@ -1,4 +1,4 @@
-name: WebCastFeedHttpService
+name: XiugouWebSocketServer
 
 on:
   push:
