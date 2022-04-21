@@ -49,18 +49,11 @@ namespace XiugouWebSocketServer.Middleware
 
                         _Manager.GetAllSockets().TryRemove(id, out WebSocket sock);
 
-                        if (sock?.State == WebSocketState.Open)
-                        {
-                            var closeStatus = result.CloseStatus;
-                            if (closeStatus != null)
-                            {
-                                await sock.CloseAsync(
-                                    closeStatus.Value,
+                        await sock.CloseAsync(
+                                    result.CloseStatus.Value,
                                     result.CloseStatusDescription,
                                     CancellationToken.None);
-                            }
-                        }
-                        
+
                         Console.WriteLine("Received closed message");
                     }
                 });
@@ -98,7 +91,14 @@ namespace XiugouWebSocketServer.Middleware
                 var routeObj = JsonConvert.DeserializeObject<dynamic>(message);
                 if (Guid.TryParse(routeObj.To.ToString(), out Guid guidOutput))
                 {
-                    Console.WriteLine("Guid Parsed successfully");
+                    var toSocket = _Manager
+                        .GetAllSockets()[guidOutput.ToString()];
+
+                    if (toSocket != null && toSocket.State == WebSocketState.Open) {
+                        await toSocket.SendAsync(Encoding.UTF8.GetBytes(message),
+                        WebSocketMessageType.Text, true, CancellationToken.None);
+                        return;
+                    }
                 }
                 else
                 {
