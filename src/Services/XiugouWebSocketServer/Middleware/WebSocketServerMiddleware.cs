@@ -11,9 +11,14 @@ namespace XiugouWebSocketServer.Middleware
     {
         private readonly RequestDelegate _Next;
 
-        public WebSocketServerMiddleware(RequestDelegate next)
+        private readonly WebSocketServerConnectionManager _Manager;
+
+        public WebSocketServerMiddleware(RequestDelegate next,
+            WebSocketServerConnectionManager webSocketServerConnectionManager)
         {
             _Next = next;
+            _Manager = webSocketServerConnectionManager
+                       ?? throw new ArgumentNullException(nameof(webSocketServerConnectionManager));
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -22,6 +27,7 @@ namespace XiugouWebSocketServer.Middleware
             {
                 var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                 Console.WriteLine("WebSocket Connected");
+                var connId = _Manager.AddSocket(webSocket);
 
                 await ReceiveMessage(webSocket, async (result, buffer) =>
                 {

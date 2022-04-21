@@ -14,7 +14,7 @@ namespace XiugouWebSocketServer.Middleware
         {
             //Look at Service Lifetimes in .Net Core Fundametal Documentation
             //services.AddTransient<WebSocketServerConnectionManager>();
-            // services.AddSingleton<WebSocketServerConnectionManager>();
+            services.AddSingleton<WebSocketServerConnectionManager>();
             return services;
         }
     }
