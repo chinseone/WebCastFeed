@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebCastFeed", "WebCastFeed.csproj", "{3CDF777E-83D6-4CD3-BE90-120456D6EA8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xiugou.Entities", "..\..\Assemblies\Xiugou.Entities\Xiugou.Entities.csproj", "{ACF079A1-9D76-49CC-843B-9C5E8D2E66C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xiugou.Entities", "..\..\Assemblies\Xiugou.Entities\Xiugou.Entities.csproj", "{ACF079A1-9D76-49CC-843B-9C5E8D2E66C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
