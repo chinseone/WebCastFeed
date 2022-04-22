@@ -15,6 +15,8 @@ namespace XiugouWebSocketServer.Middleware
 
         private readonly WebSocketServerConnectionManager _Manager;
 
+        private readonly string _DouyinChatPath = "/douyin/chat";
+
         public WebSocketServerMiddleware(RequestDelegate next,
             WebSocketServerConnectionManager webSocketServerConnectionManager)
         {
@@ -25,7 +27,7 @@ namespace XiugouWebSocketServer.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context.WebSockets.IsWebSocketRequest)
+            if (context.Request.Path == _DouyinChatPath && context.WebSockets.IsWebSocketRequest)
             {
                 var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                 Console.WriteLine("WebSocket Connected");
