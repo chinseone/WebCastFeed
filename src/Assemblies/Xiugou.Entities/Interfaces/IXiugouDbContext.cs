@@ -6,6 +6,8 @@ namespace Xiugou.Entities.Entities
     {
         DbSet<Ticket> Tickets { get; set; }
 
+        DbSet<User> Users { get; set; }
+
         int SaveChanges();
     }
 }

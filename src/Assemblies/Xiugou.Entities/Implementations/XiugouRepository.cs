@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Xiugou.Entities.Entities;
+using Xiugou.Entities.Enums;
 
 namespace Xiugou.Entities.Implementations
 {
@@ -27,42 +29,41 @@ namespace Xiugou.Entities.Implementations
             return _XiugouDbContext.SaveChanges();
         }
 
-        public async Task UpdateIsDistributed(Ticket ticket)
+        public async Task UpdateTicket(Ticket ticket)
         {
-            var entity = await _XiugouDbContext.Tickets
-                .SingleOrDefaultAsync(e => e.Code == ticket.Code)
-                .ConfigureAwait(false);
-            entity.IsDistributed = ticket.IsDistributed;
-            _XiugouDbContext.SaveChanges();
+            await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var entity = await _XiugouDbContext.Tickets
+                    .SingleOrDefaultAsync(e => e.Id == ticket.Id)
+                    .ConfigureAwait(false);
+                entity.Event = ticket.Event;
+                entity.Platform = ticket.Platform;
+                entity.IsDistributed = ticket.IsDistributed;
+                entity.IsClaimed = ticket.IsClaimed;
+                entity.IsActivated = ticket.IsActivated;
+                await _XiugouDbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Exception when update ticket status. Exception: {e}");
+            }
         }
 
-        public async Task UpdateIsClaimed(Ticket ticket)
+        public int Save(User user)
         {
-            var entity = await _XiugouDbContext.Tickets
-                .SingleOrDefaultAsync(e => e.Code == ticket.Code)
-                .ConfigureAwait(false);
-            entity.IsClaimed = ticket.IsClaimed;
-            _XiugouDbContext.SaveChanges();
+            _XiugouDbContext.Users.Add(user);
+            return _XiugouDbContext.SaveChanges();
         }
 
-        public async Task UpdateIsActivated(Ticket ticket)
+        public async Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform)
         {
-            var entity = await _XiugouDbContext.Tickets
-                .SingleOrDefaultAsync(e => e.Code == ticket.Code)
-                .ConfigureAwait(false);
-            entity.IsActivated = ticket.IsActivated;
-            _XiugouDbContext.SaveChanges();
-        }
-
-        public async Task UpdateTicketState(Ticket ticket)
-        {
-            var entity = await _XiugouDbContext.Tickets
-                .SingleOrDefaultAsync(e => e.Id == ticket.Id)
-                .ConfigureAwait(false);
-            entity.IsDistributed = ticket.IsDistributed;
-            entity.IsClaimed = ticket.IsClaimed;
-            entity.IsActivated = ticket.IsActivated;
-            _XiugouDbContext.SaveChanges();
+            var query = _XiugouDbContext.Users
+                .Where(e => e.Platform.Equals(platform))
+                .Where(e => e.UserId.Equals(userId));
+            return await query.FirstAsync();
         }
     }
 }

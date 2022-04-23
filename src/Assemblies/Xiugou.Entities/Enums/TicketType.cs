@@ -2,8 +2,8 @@
 {
     public enum TicketType
     {
-        Free = 1,
-        Normal = 2,
-        Vip = 3
+        A = 1, // VIP
+        B = 2, // Normal
+        C = 3  // Free
     }
 }

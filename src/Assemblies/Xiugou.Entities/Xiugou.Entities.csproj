@@ -16,6 +16,7 @@
     <Folder Include="Entities\" />
     <Folder Include="Implementations\" />
     <Folder Include="Enums\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -33,7 +33,7 @@ namespace WebCastFeed.Operations
             return new GetTicketByCodeResponse()
             {
                 Code = ticket.Code,
-                Event = ticket.Event,
+                Event = ticket.Event.HasValue ? ticket.Event.ToString() : "",
                 TicketType = ticket.TicketType,
                 IsDistributed = ticket.IsDistributed,
                 IsClaimed = ticket.IsClaimed,
