@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Xiugou.Entities.Enums;
 
 namespace Xiugou.Entities.Entities
 {
@@ -8,12 +9,10 @@ namespace Xiugou.Entities.Entities
 
         Task<Ticket> GetTicketByCode(string code);
 
-        Task UpdateIsDistributed(Ticket ticket);
+        Task UpdateTicket(Ticket ticket);
 
-        Task UpdateIsClaimed(Ticket ticket);
+        int Save(User user);
 
-        Task UpdateIsActivated(Ticket ticket);
-
-        Task UpdateTicketState(Ticket ticket);
+        Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
     }
 }

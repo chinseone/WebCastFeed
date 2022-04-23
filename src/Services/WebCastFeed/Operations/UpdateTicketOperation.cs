@@ -49,7 +49,7 @@ namespace WebCastFeed.Operations
                 return false;
             }
 
-            await _XiugouRepository.UpdateTicketState(toTicket);
+            await _XiugouRepository.UpdateTicket(toTicket);
             
             return true;
         }

@@ -7,6 +7,15 @@ namespace WebCastFeed.Models.Requests
         [JsonPropertyName("ticketCode")]
         public string TicketCode { get; set; }
 
+        [JsonPropertyName("platform")]
+        public int Platform { get; set; }
+
+        [JsonPropertyName("event")]
+        public int Event { get; set; }
+
+        [JsonPropertyName("userId")]
+        public string UserId { get; set; }
+
         [JsonPropertyName("isDistributed")]
         public bool IsDistributed { get; set; }
 

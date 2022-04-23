@@ -11,7 +11,7 @@ namespace WebCastFeed.Operations
     public class CreateTicketOperation : IAsyncOperation<CreateTicketRequest, bool>
     {
         private readonly IXiugouRepository _XiugouRepository;
-        private const string _CharPool = "0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ";
+        private const string _CharPool = "3ghijkl67pqras1tnucvw4xyzAB8C0DEFmGHbIJK5LMNfdPQRS2TUVeWX9YZ";
 
         public CreateTicketOperation(IXiugouRepository xiugouRepository)
         {
@@ -20,30 +20,40 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<bool> ExecuteAsync(CreateTicketRequest input, CancellationToken cancellationToken = default)
         {
-            var parseResult = Enum.TryParse(input.TicketType, true, out TicketType ticketType);
+            var ticketTypeParseResult = Enum.TryParse(input.TicketType, true, out TicketType ticketType);
 
-            if (!parseResult)
+            if (!ticketTypeParseResult)
             {
                 return false;
             }
 
             var code = GenerateTicketCode();
-            var tempTicket = await _XiugouRepository.GetTicketByCode(code);
-
-            while (tempTicket != null)
+            try
             {
-                code = GenerateTicketCode();
-                tempTicket = await _XiugouRepository.GetTicketByCode(code);
+                var tempTicket = await _XiugouRepository.GetTicketByCode(code);
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+
+            // while (tempTicket != null)
+            // {
+            //     code = GenerateTicketCode();
+            //     tempTicket = await _XiugouRepository.GetTicketByCode(code);
+            // }
 
             var ticket = new Ticket()
             {
                 Code = code,
-                Event = input.Event,
+                TicketType = ticketType,
+                Event = null,
+                Platform = null,
                 IsActivated = false,
                 IsClaimed = false,
-                IsDistributed = false,
-                TicketType = ticketType
+                IsDistributed = false
             };
 
             _XiugouRepository.Save(ticket);
@@ -55,10 +65,10 @@ namespace WebCastFeed.Operations
         {
             var len = _CharPool.Length;
             var result = new StringBuilder();
+            var r = new Random(len);
 
-            for(var i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
-                var r = new Random(len);
                 var c = _CharPool[r.Next(0, len)];
                 result.Append(c);
             }

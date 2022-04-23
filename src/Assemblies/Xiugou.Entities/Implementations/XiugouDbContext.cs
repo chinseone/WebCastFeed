@@ -11,13 +11,25 @@ namespace Xiugou.Entities.Implementations
     {
         public DbSet<Ticket> Tickets { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         public XiugouDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Ticket
             modelBuilder.Entity<Ticket>().HasKey(e => e.Id);
             modelBuilder.Entity<Ticket>().Property(e => e.TicketType)
                 .HasConversion(new EnumToNumberConverter<TicketType, int>());
+            modelBuilder.Entity<Ticket>().Property(e => e.Platform)
+                .HasConversion(new EnumToNumberConverter<Platform, int>());
+            modelBuilder.Entity<Ticket>().Property(e => e.Event)
+                .HasConversion(new EnumToNumberConverter<Event, int>());
+
+            // User
+            modelBuilder.Entity<User>().HasKey(u => u.Id);
+            modelBuilder.Entity<User>().Property(u => u.Platform)
+                .HasConversion(new EnumToNumberConverter<Platform, int>());
 
             base.OnModelCreating(modelBuilder);
         }
@@ -27,6 +39,7 @@ namespace Xiugou.Entities.Implementations
             ChangeTracker.DetectChanges();
 
             UpdateTimestampProperty<Ticket>();
+            UpdateTimestampProperty<User>();
 
             return base.SaveChanges();
         }

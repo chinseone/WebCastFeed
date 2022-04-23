@@ -34,11 +34,11 @@ namespace WebCastFeed
             services.AddScoped<IXiugouRepository, XiugouRepository>();
 
             services.AddSingleton<OperationExecutor>();
-            services.AddSingleton<ValidateDouyinWebhookOperation>();
-            services.AddSingleton<HandleDouyinFeedOperation>();
-            services.AddSingleton<CreateTicketOperation>();
-            services.AddSingleton<UpdateTicketOperation>();
-            services.AddSingleton<GetTicketByCodeOperation>();
+            services.AddScoped<ValidateDouyinWebhookOperation>();
+            services.AddScoped<HandleDouyinFeedOperation>();
+            services.AddScoped<CreateTicketOperation>();
+            services.AddScoped<UpdateTicketOperation>();
+            services.AddScoped<GetTicketByCodeOperation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
