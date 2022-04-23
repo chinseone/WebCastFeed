@@ -17,8 +17,7 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<GetTicketByCodeResponse> ExecuteAsync(string input, CancellationToken cancellationToken = default)
         {
-            var code = input;
-            if (string.IsNullOrEmpty(code))
+            if (SanitizeInput(input, out var code))
             {
                 return null;
             }
@@ -39,6 +38,21 @@ namespace WebCastFeed.Operations
                 IsClaimed = ticket.IsClaimed,
                 IsActivated = ticket.IsActivated
             };
+        }
+
+        private bool SanitizeInput(string input, out string code)
+        {
+            foreach (char c in input)
+            {
+                if (!char.IsLetterOrDigit(c))
+                {
+                    code = string.Empty;
+                    return false;
+                }   
+            }
+
+            code = input.ToUpper();
+            return true;
         }
     }
 }
