@@ -11,7 +11,7 @@ namespace WebCastFeed.Operations
     public class CreateTicketOperation : IAsyncOperation<CreateTicketRequest, bool>
     {
         private readonly IXiugouRepository _XiugouRepository;
-        private const string _CharPool = "3ghijkl67pqras1tnucvw4xyzAB8C0DEFmGHbIJK5LMNfdPQRS2TUVeWX9YZ";
+        private const string _CharPool = "36714AB8C0DEFGHIJK5LMNPQRS2TUVWX9YZ";
 
         public CreateTicketOperation(IXiugouRepository xiugouRepository)
         {
@@ -31,6 +31,11 @@ namespace WebCastFeed.Operations
             try
             {
                 var tempTicket = await _XiugouRepository.GetTicketByCode(code);
+                while (tempTicket != null)
+                {
+                    code = GenerateTicketCode();
+                    tempTicket = await _XiugouRepository.GetTicketByCode(code);
+                }
             }
             catch (Exception e)
             {
@@ -38,13 +43,6 @@ namespace WebCastFeed.Operations
                 throw;
             }
             
-
-            // while (tempTicket != null)
-            // {
-            //     code = GenerateTicketCode();
-            //     tempTicket = await _XiugouRepository.GetTicketByCode(code);
-            // }
-
             var ticket = new Ticket()
             {
                 Code = code,
