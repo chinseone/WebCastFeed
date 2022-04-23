@@ -65,11 +65,13 @@ namespace WebCastFeed.Operations
         {
             var len = _CharPool.Length;
             var result = new StringBuilder();
-            var r = new Random(len);
+            var r = new Random();
 
             for (var i = 0; i < 6; i++)
             {
-                var c = _CharPool[r.Next(0, len)];
+                var flt = r.NextDouble();
+                var shift = Convert.ToInt32(Math.Floor(len * flt));
+                var c = _CharPool[shift];
                 result.Append(c);
             }
 
