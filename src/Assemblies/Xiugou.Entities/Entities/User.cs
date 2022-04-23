@@ -30,9 +30,6 @@ namespace Xiugou.Entities.Entities
         // 嘉宾礼物的总付费
         public int TotalPayGuest { get; set; }
 
-        // 已获得的道具列表，以json结构或逗号分隔的字符串
-        public List<string> Items { get; set; }
-
         // 初次加入的时间戳
         public DateTime JoinTimestamp { get; set; }
 
