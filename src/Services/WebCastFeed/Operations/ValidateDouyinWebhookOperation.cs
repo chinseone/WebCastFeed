@@ -1,21 +1,25 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Models;
+using WebCastFeed.Models.Response;
 
 namespace WebCastFeed.Operations
 {
-    public class ValidateDouyinWebhookOperation : IAsyncOperation<DouyinWebhookValidationModel, string>
+    public class ValidateDouyinWebhookOperation : IAsyncOperation<DouyinWebhookValidationModel, DouyinWebhookValidateResponse>
     {
-        public async ValueTask<string> ExecuteAsync(DouyinWebhookValidationModel input, CancellationToken cancellationToken = default)
+        public async ValueTask<DouyinWebhookValidateResponse> ExecuteAsync(DouyinWebhookValidationModel input, CancellationToken cancellationToken = default)
         {
             if (input?.Content == null)
             {
-                return string.Empty;
+                return null;
             }
 
             var content = input.Content;
 
-            return content.Challenge.ToString();
+            return new DouyinWebhookValidateResponse()
+            {
+               Challenge = content.Challenge
+            };
         }
     }
 }

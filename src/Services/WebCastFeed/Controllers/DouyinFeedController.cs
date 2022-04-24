@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Models;
+using WebCastFeed.Models.Response;
 using WebCastFeed.Operations;
 
 namespace WebCastFeed.Controllers
@@ -25,11 +26,11 @@ namespace WebCastFeed.Controllers
 
         [HttpPost("webhook-validation")]
         [Consumes("application/json")]
-        public ValueTask<string> ValidateDouyinWebhook(
+        public ValueTask<DouyinWebhookValidateResponse> ValidateDouyinWebhook(
             [FromBody]DouyinWebhookValidationModel input,
             [FromServices] ValidateDouyinWebhookOperation operation,
             CancellationToken cancellationToken)
         => _operationExecutor.ExecuteAsync<ValidateDouyinWebhookOperation,
-            DouyinWebhookValidationModel, string>(operation, input, cancellationToken);
+            DouyinWebhookValidationModel, DouyinWebhookValidateResponse>(operation, input, cancellationToken);
     }
 }
