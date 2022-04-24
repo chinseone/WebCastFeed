@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Models.Response;
@@ -42,17 +43,14 @@ namespace WebCastFeed.Operations
 
         private bool SanitizeInput(string input, out string code)
         {
-            foreach (char c in input)
+            if (input.All(char.IsLetterOrDigit))
             {
-                if (!char.IsLetterOrDigit(c))
-                {
-                    code = string.Empty;
-                    return false;
-                }   
+                code = input.ToUpper();
+                return true;
             }
 
-            code = input.ToUpper();
-            return true;
+            code = string.Empty;
+            return false;
         }
     }
 }
