@@ -28,6 +28,14 @@ namespace WebCastFeed.Controllers
         => _OperationExecutor.ExecuteAsync<DouyinStartGameOperation,
                 DouyinStartGameRequest, DouyinStartGameResponse>(operation, request, cancellationToken);
 
+        [HttpGet("active-session")]
+        [Consumes("application/json")]
+        public ValueTask<GetActiveSessionIdByAnchorIdResponse> GetActiveSessionIdByAnchorId(
+            [FromQuery] string anchorId,
+            [FromServices] GetActiveSessionIdByAnchorIdOperation operation,
+            CancellationToken cancellationToken)
+            => _OperationExecutor.ExecuteAsync<GetActiveSessionIdByAnchorIdOperation,
+                string, GetActiveSessionIdByAnchorIdResponse>(operation, anchorId, cancellationToken);
 
         [HttpGet("health")]
         public string Health()

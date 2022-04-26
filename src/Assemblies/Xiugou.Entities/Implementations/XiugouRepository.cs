@@ -90,5 +90,12 @@ namespace Xiugou.Entities.Implementations
                 throw new Exception($"Exception when update session status. Exception: {e}");
             }
         }
+
+        public async Task<Session> GetSessionByAnchorId(string anchorId)
+        {
+            return await _XiugouDbContext.Sessions
+                .SingleOrDefaultAsync(s => s.AnchorId.Equals(anchorId))
+                .ConfigureAwait(false);
+        }
     }
 }
