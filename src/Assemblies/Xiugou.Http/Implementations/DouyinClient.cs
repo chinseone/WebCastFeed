@@ -13,6 +13,7 @@ namespace Xiugou.Http
         private readonly IXiugouHttpClient _HttpClient;
         private readonly string _NotifyUrl = "https://apis.xiugou.club/v1/douyin/live-feed";
         private readonly string _StartGamePath = "/api/third_party/dance_game/start";
+        private readonly string _StopGamePath = "/api/third_party/dance_game/stop";
         private readonly string _FeedDataSets = "[1,2]";
 
         public DouyinClient(string baseUrl)
@@ -53,6 +54,32 @@ namespace Xiugou.Http
                 true).ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<StartDouyinGameResponse>(response);
+        }
+
+        public async Task<StopDouyinGameResponse> StopDouyinGame(string accessToken, string anchorId, string sessionId)
+        {
+            var request = new StopDouyinGameRequest()
+            {
+                AnchorId = anchorId,
+                SessionId = sessionId
+            };
+
+            var json = JsonConvert.SerializeObject(request);
+            var inputModel = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Token", accessToken},
+                {"Content-Type", "application/json"}
+            };
+
+            var response = await SendAsync<string>(
+                HttpMethod.Post,
+                _StopGamePath,
+                inputModel,
+                headers,
+                true).ConfigureAwait(false);
+
+            return JsonConvert.DeserializeObject<StopDouyinGameResponse>(response);
         }
 
         public async Task<TOutput> SendAsync<TOutput>(
