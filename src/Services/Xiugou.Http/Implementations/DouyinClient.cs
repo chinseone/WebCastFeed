@@ -11,6 +11,9 @@ namespace Xiugou.Http
     public class DouyinClient : IDouyinClient
     {
         private readonly IXiugouHttpClient _HttpClient;
+        private readonly string _NotifyUrl = "https://apis.xiugou.club/v1/douyin/live-feed";
+        private readonly string _StartGamePath = "/api/third_party/dance_game/start";
+        private readonly string _FeedDataSets = "[1,2]";
 
         public DouyinClient(string baseUrl)
         {
@@ -30,8 +33,8 @@ namespace Xiugou.Http
             var request = new StartDouyinGameRequest()
             {
                 AnchorId = anchorId,
-                DataSets = "[1,2]", // hard coded to comments & leave room
-                NotifyUrl = "https://apis.xiugou.club/v1/douyin/live-data"
+                DataSets = _FeedDataSets, // hard coded to comments & leave room
+                NotifyUrl = _NotifyUrl
             };
 
             var json = JsonConvert.SerializeObject(request);
@@ -44,7 +47,7 @@ namespace Xiugou.Http
 
             var response = await SendAsync<string>(
                 HttpMethod.Post,
-                "/api/third_party/dance_game/start",
+                _StartGamePath,
                 inputModel,
                 headers,
                 true).ConfigureAwait(false);

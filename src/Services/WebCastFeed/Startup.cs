@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using WebCastFeed.Operations;
 using Xiugou.Entities.Entities;
 using Xiugou.Entities.Implementations;
+using Xiugou.Http;
 
 namespace WebCastFeed
 {
@@ -31,6 +32,9 @@ namespace WebCastFeed
                 options.UseMySQL(sqlConnectionString);
             }, int.Parse(Environment.GetEnvironmentVariable("ConnectionPoolSize") ?? "10"));
 
+            var douyinBaseUrl = Environment.GetEnvironmentVariable("DouyinBaseUrl");
+            services.AddScoped<IDouyinClient>(p => new DouyinClient(douyinBaseUrl));
+
             services.AddScoped<IXiugouRepository, XiugouRepository>();
 
             services.AddSingleton<OperationExecutor>();
@@ -39,6 +43,7 @@ namespace WebCastFeed
             services.AddScoped<CreateTicketOperation>();
             services.AddScoped<UpdateTicketOperation>();
             services.AddScoped<GetTicketByCodeOperation>();
+            services.AddScoped<DouyinStartGameOperation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
