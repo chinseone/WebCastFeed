@@ -2,10 +2,10 @@
 
 namespace WebCastFeed.Models.Response
 {
-    public class DouyinStopGameResponse
+    public class DouyinStartGameResponse
     {
-        [JsonPropertyName("status")]
-        public int Status { get; set; }
+        [JsonPropertyName("session_id")]
+        public string SessionId { get; set; }
 
         [JsonPropertyName("errcode")]
         public int ErrorCode { get; set; }
