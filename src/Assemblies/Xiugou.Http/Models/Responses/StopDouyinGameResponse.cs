@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WebCastFeed.Models.Response
+namespace Xiugou.Http.Models.Responses
 {
-    public class DouyinStopGameResponse
+    public class StopDouyinGameResponse
     {
         [JsonPropertyName("status")]
         public int Status { get; set; }
