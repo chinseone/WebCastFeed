@@ -14,7 +14,8 @@
       "launchBrowser": true,
       "launchUrl": "v1/douyin/health",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "XiugouMySqlConnectionString": "server=localhost;database=xiugou_local;uid=root;pwd=D^FvkDt*6T!UHX=D"
       }
     },
     "WebCastFeed": {
@@ -22,7 +23,11 @@
       "launchBrowser": true,
       "launchUrl": "v1/douyin/health",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "XiugouMySqlConnectionString": "server=localhost;database=xiugou_local;uid=root;pwd=D^FvkDt*6T!UHX=D",
+        "TicketCreationKey": "creation-key",
+        "TicketUpdateKey": "update-key",
+        "TicketGetKey":  "get-key" 
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     },

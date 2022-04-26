@@ -5,6 +5,6 @@ namespace Xiugou.Http
 {
     public interface IDouyinClient
     {
-        Task<StartDouyinGameResponse> StartDouyinGame(string accessToken, string anchor_id);
+        Task<StartDouyinGameResponse> StartDouyinGame(string accessToken, string anchorId);
     }
 }

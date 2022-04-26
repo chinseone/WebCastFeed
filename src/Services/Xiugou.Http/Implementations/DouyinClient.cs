@@ -25,11 +25,11 @@ namespace Xiugou.Http
             _HttpClient = new XiugouHttpClient(urlBuilder.ToString(), TimeSpan.Parse("00:00:10"));
         }
 
-        public async Task<StartDouyinGameResponse> StartDouyinGame(string accessToken, string anchor_id)
+        public async Task<StartDouyinGameResponse> StartDouyinGame(string accessToken, string anchorId)
         {
             var request = new StartDouyinGameRequest()
             {
-                AnchorId = anchor_id,
+                AnchorId = anchorId,
                 DataSets = "[1,2]", // hard coded to comments & leave room
                 NotifyUrl = "https://apis.xiugou.club/v1/douyin/live-data"
             };
