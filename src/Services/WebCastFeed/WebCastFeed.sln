@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebCastFeed", "WebCastFeed.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xiugou.Entities", "..\..\Assemblies\Xiugou.Entities\Xiugou.Entities.csproj", "{ACF079A1-9D76-49CC-843B-9C5E8D2E66C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xiugou.Http", "..\Xiugou.Http\Xiugou.Http.csproj", "{3E4631D7-CF80-4606-8E58-87E07E38D750}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xiugou.Http", "..\..\Assemblies\Xiugou.Http\Xiugou.Http.csproj", "{6587D552-05D2-4E93-B000-6F60C285217D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{ACF079A1-9D76-49CC-843B-9C5E8D2E66C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACF079A1-9D76-49CC-843B-9C5E8D2E66C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACF079A1-9D76-49CC-843B-9C5E8D2E66C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E4631D7-CF80-4606-8E58-87E07E38D750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E4631D7-CF80-4606-8E58-87E07E38D750}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E4631D7-CF80-4606-8E58-87E07E38D750}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E4631D7-CF80-4606-8E58-87E07E38D750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6587D552-05D2-4E93-B000-6F60C285217D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6587D552-05D2-4E93-B000-6F60C285217D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6587D552-05D2-4E93-B000-6F60C285217D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6587D552-05D2-4E93-B000-6F60C285217D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
