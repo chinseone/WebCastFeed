@@ -13,6 +13,8 @@ namespace Xiugou.Entities.Implementations
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Session> Sessions { get; set; }
+
         public XiugouDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,6 +32,9 @@ namespace Xiugou.Entities.Implementations
             modelBuilder.Entity<User>().HasKey(u => u.Id);
             modelBuilder.Entity<User>().Property(u => u.Platform)
                 .HasConversion(new EnumToNumberConverter<Platform, int>());
+
+            // Session
+            modelBuilder.Entity<Session>().HasKey(s => s.Id);
 
             base.OnModelCreating(modelBuilder);
         }
