@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Assemblies\Xiugou.Entities\Xiugou.Entities.csproj" />
+    <ProjectReference Include="..\..\Assemblies\Xiugou.Http\Xiugou.Http.csproj" />
   </ItemGroup>
 
 

@@ -14,5 +14,9 @@ namespace Xiugou.Entities.Entities
         int Save(User user);
 
         Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
+
+        int Save(Session session);
+
+        Task UpdateSessionBySessionId(Session session);
     }
 }

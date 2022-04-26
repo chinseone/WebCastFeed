@@ -65,5 +65,30 @@ namespace Xiugou.Entities.Implementations
                 .Where(e => e.UserId.Equals(userId));
             return await query.FirstAsync();
         }
+
+        public int Save(Session session)
+        {
+            _XiugouDbContext.Sessions.Add(session);
+            return _XiugouDbContext.SaveChanges();
+        }
+
+        public async Task UpdateSessionBySessionId(Session session)
+        {
+            await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var entity = await _XiugouDbContext.Sessions
+                    .SingleOrDefaultAsync(e => e.SessionId == session.SessionId)
+                    .ConfigureAwait(false);
+                entity.IsActive = session.IsActive;
+                await _XiugouDbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Exception when update session status. Exception: {e}");
+            }
+        }
     }
 }
