@@ -18,5 +18,7 @@ namespace Xiugou.Entities.Entities
         int Save(Session session);
 
         Task UpdateSessionBySessionId(Session session);
+
+        Task<Session> GetSessionByAnchorId(string anchorId);
     }
 }

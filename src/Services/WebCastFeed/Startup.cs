@@ -44,6 +44,7 @@ namespace WebCastFeed
             services.AddScoped<UpdateTicketOperation>();
             services.AddScoped<GetTicketByCodeOperation>();
             services.AddScoped<DouyinStartGameOperation>();
+            services.AddScoped<GetActiveSessionIdByAnchorIdOperation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

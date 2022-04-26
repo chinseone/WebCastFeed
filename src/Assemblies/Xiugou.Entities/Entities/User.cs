@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Xiugou.Entities.Enums;
 
 namespace Xiugou.Entities.Entities
