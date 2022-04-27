@@ -5,6 +5,7 @@ using WebCastFeed.Models.Requests;
 using WebCastFeed.Models.Response;
 using Xiugou.Entities.Entities;
 using Xiugou.Http;
+using Xiugou.Http.Models.Responses;
 
 namespace WebCastFeed.Operations
 {
@@ -24,7 +25,19 @@ namespace WebCastFeed.Operations
         {
             try
             {
-                var response = await _DouyinClient.StopDouyinGame(input.AccessToken, input.AnchorId, input.SessionId);
+                bool.TryParse(Environment.GetEnvironmentVariable("UseMockData") ?? "true", out bool useMockData);
+                StopDouyinGameResponse response;
+                if (useMockData)
+                {
+                    response = new StopDouyinGameResponse()
+                    {
+                        Status = 1
+                    };
+                }
+                else
+                {
+                    response = await _DouyinClient.StopDouyinGame(input.AccessToken, input.AnchorId, input.SessionId);
+                }
 
                 if (response.ErrorCode != 0)
                 {
