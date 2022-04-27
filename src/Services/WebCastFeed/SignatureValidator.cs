@@ -16,6 +16,7 @@ namespace WebCastFeed
             List<DouyinMessage> request)
         {
             var sigValidationEnabled = bool.Parse(Environment.GetEnvironmentVariable("ValidateSignature") ?? "false");
+            Console.WriteLine($"Validate signature: {sigValidationEnabled}");
             if (sigValidationEnabled)
             {
 
