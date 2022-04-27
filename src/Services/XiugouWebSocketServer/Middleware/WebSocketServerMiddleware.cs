@@ -42,7 +42,7 @@ namespace XiugouWebSocketServer.Middleware
                 Console.WriteLine("WebSocket Connected");
 
                 var connId = _Manager.AddSocket(webSocket);
-                await SendConnIdAsync(webSocket, connId);
+                // await SendConnIdAsync(webSocket, connId);
 
                 await ReceiveMessage(webSocket, async (result, buffer) =>
                 {
