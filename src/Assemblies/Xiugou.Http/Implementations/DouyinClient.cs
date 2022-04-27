@@ -45,14 +45,14 @@ namespace Xiugou.Http
                 {"X-Token", accessToken}
             };
 
-            var response = await SendAsync<string>(
+            var response = await SendAsync<StartDouyinGameResponse>(
                 HttpMethod.Post,
                 _StartGamePath,
                 inputModel,
                 headers,
                 true).ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<StartDouyinGameResponse>(response);
+            return response;
         }
 
         public async Task<StopDouyinGameResponse> StopDouyinGame(string accessToken, string anchorId, string sessionId)
@@ -70,14 +70,14 @@ namespace Xiugou.Http
                 {"X-Token", accessToken},
             };
 
-            var response = await SendAsync<string>(
+            var response = await SendAsync<StopDouyinGameResponse>(
                 HttpMethod.Post,
                 _StopGamePath,
                 inputModel,
                 headers,
                 true).ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<StopDouyinGameResponse>(response);
+            return response;
         }
 
         public async Task<TOutput> SendAsync<TOutput>(
