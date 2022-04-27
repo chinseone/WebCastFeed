@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace Xiugou.Http
 {
     public class XiugouHttpClient : HttpClient, IXiugouHttpClient
     {
+        private readonly string _ContentType = "application/json";
+
         public XiugouHttpClient(string baseAddress, TimeSpan timeout)
         {
             if (string.IsNullOrWhiteSpace(baseAddress))
@@ -21,6 +24,7 @@ namespace Xiugou.Http
 
             BaseAddress = new Uri(baseAddress);
             Timeout = timeout;
+            DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_ContentType));
         }
 
         public async Task<TOutput> SendAsync<TOutput>(
@@ -56,7 +60,7 @@ namespace Xiugou.Http
                     var request = CreateRequest(httpMethod, path, querystring, inputModel, headers);
                     response = await SendAsync(
                         request,
-                        cancellationReceiptSource.Token).ConfigureAwait(false);
+                        CancellationToken.None).ConfigureAwait(false);
                 }
 
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -73,9 +77,10 @@ namespace Xiugou.Http
                 //TODO: throw specific exception
                 throw new Exception();
             }
-            catch
+            catch(Exception e)
             {
                 Console.WriteLine("Request url: " + BaseAddress + path + querystring);
+                Console.WriteLine($"An error has occurred, {e}");
                 throw;
             }
         }
@@ -101,6 +106,7 @@ namespace Xiugou.Http
 
             foreach (var header in headers)
             {
+                Console.WriteLine($"HttpClient Header ----- {header.Key} ： {header.Value}");
                 request.Headers.Add(header.Key, header.Value);
             }
 
