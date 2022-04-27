@@ -1,13 +1,14 @@
 ﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Xiugou.Http.Models.Requests
 {
     public class StopDouyinGameRequest
     {
-        [JsonPropertyName("anchor_id")]
+        [JsonProperty("anchor_id")]
         public string AnchorId { get; set; }
 
-        [JsonPropertyName("session_id")]
+        [JsonProperty("session_id")]
         public string SessionId { get; set; }
     }
 }
