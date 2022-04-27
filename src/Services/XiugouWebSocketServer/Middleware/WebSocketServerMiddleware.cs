@@ -27,6 +27,15 @@ namespace XiugouWebSocketServer.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
+            Console.WriteLine($"Path: {context.Request.Path}");
+            Console.WriteLine($"Websocket request: {context.WebSockets.IsWebSocketRequest}");
+
+            var headers = context.Request.Headers;
+            foreach (var header in headers)
+            {
+                Console.WriteLine($"Header {header.Key} : {header.Value}");
+            }
+            
             if (context.Request.Path == _DouyinChatPath && context.WebSockets.IsWebSocketRequest)
             {
                 var webSocket = await context.WebSockets.AcceptWebSocketAsync();
