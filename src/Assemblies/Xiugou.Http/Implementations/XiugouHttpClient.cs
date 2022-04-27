@@ -60,7 +60,7 @@ namespace Xiugou.Http
                     var request = CreateRequest(httpMethod, path, querystring, inputModel, headers);
                     response = await SendAsync(
                         request,
-                        cancellationReceiptSource.Token).ConfigureAwait(false);
+                        CancellationToken.None).ConfigureAwait(false);
                 }
 
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

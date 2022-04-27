@@ -26,7 +26,7 @@ namespace Xiugou.Http
             var urlBuilder = new System.Text.StringBuilder();
             urlBuilder.Append(baseUrl.TrimEnd('/'));
 
-            _HttpClient = new XiugouHttpClient(urlBuilder.ToString(), TimeSpan.Parse("00:00:10"));
+            _HttpClient = new XiugouHttpClient(urlBuilder.ToString(), TimeSpan.Parse("00:00:30"));
         }
 
         public async Task<StartDouyinGameResponse> StartDouyinGame(string accessToken, string anchorId)
