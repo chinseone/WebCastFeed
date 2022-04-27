@@ -20,4 +20,9 @@ RUN dotnet publish "WebCastFeed.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# install "ping"
+RUN apt-get update
+RUN apt-get install -y iputils-ping
+
 ENTRYPOINT ["dotnet", "WebCastFeed.dll"]
