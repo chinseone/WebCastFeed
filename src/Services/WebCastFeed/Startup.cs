@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,7 @@ namespace WebCastFeed
 
             services.AddSingleton<OperationExecutor>();
             services.AddScoped<ValidateDouyinWebhookOperation>();
-            services.AddScoped<HandleDouyinFeedOperation>();
+            services.AddScoped<HandleLiveFeedOperation>();
             services.AddScoped<CreateTicketOperation>();
             services.AddScoped<UpdateTicketOperation>();
             services.AddScoped<GetTicketByCodeOperation>();
