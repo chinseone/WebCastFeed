@@ -1,16 +1,17 @@
 ﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Xiugou.Http.Models.Responses
 {
     public class StopDouyinGameResponse
     {
-        [JsonPropertyName("status")]
+        [JsonProperty("status")]
         public int Status { get; set; }
 
-        [JsonPropertyName("errcode")]
+        [JsonProperty("errcode")]
         public int ErrorCode { get; set; }
 
-        [JsonPropertyName("errmsg")]
+        [JsonProperty("errmsg")]
         public string ErrorMessage { get; set; }
     }
 }

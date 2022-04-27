@@ -1,16 +1,17 @@
 ﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Xiugou.Http.Models.Responses
 {
     public class StartDouyinGameResponse
     {
-        [JsonPropertyName("session_id")]
+        [JsonProperty("session_id")]
         public string SessionId { get; set; }
 
-        [JsonPropertyName("errcode")]
+        [JsonProperty("errcode")]
         public int ErrorCode { get; set; }
 
-        [JsonPropertyName("errmsg")]
+        [JsonProperty("errmsg")]
         public string ErrorMessage { get; set; }
 
         [JsonProperty("error")]
