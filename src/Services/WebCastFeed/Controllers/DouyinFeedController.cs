@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Models;
@@ -45,6 +46,30 @@ namespace WebCastFeed.Controllers
             CancellationToken cancellationToken)
             => _OperationExecutor.ExecuteAsync<GetActiveSessionIdByAnchorIdOperation,
                 string, GetActiveSessionIdByAnchorIdResponse>(operation, anchorId, cancellationToken);
+
+        [HttpPost("live-feed")]
+        [Consumes("application/json")]
+        public async Task<IActionResult> AcceptLiveFeed(
+            [FromBody] List<DouyinMessage> request,
+            [FromServices] HandleLiveFeedOperation operation,
+            CancellationToken cancellationToken,
+            [FromQuery] string cmd = "",
+            [FromQuery] string timestamp = "",
+            [FromQuery] string version = "",
+            [FromQuery] string push_id = "",
+            [FromQuery] string nonce_str = "",
+            [FromQuery] string signature = ""
+            )
+        {
+            if (SignatureValidator.ValidateSignature(cmd, timestamp, version, push_id, nonce_str, signature, request))
+            {
+                await _OperationExecutor.ExecuteAsync<HandleLiveFeedOperation,
+                    List<DouyinMessage>, bool>(operation, request, cancellationToken);
+                return Ok();
+            }
+
+            return Unauthorized("The request is unauthorized");
+        }
 
         [HttpGet("health")]
         public string Health()
