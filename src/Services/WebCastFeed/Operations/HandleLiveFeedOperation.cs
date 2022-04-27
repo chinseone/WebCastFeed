@@ -21,7 +21,7 @@ namespace WebCastFeed.Operations
             {
                 var serviceUri = new Uri(webSocketServerAddress);
                 var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(100));
+                cts.CancelAfter(TimeSpan.FromSeconds(1));
                 try
                 {
                     await client.ConnectAsync(serviceUri, cts.Token);
