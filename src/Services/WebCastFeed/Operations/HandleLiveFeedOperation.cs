@@ -21,14 +21,14 @@ namespace WebCastFeed.Operations
             {
                 var serviceUri = new Uri(webSocketServerAddress);
                 var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(1));
+                cts.CancelAfter(TimeSpan.FromSeconds(10));
                 try
                 {
                     await client.ConnectAsync(serviceUri, cts.Token);
+
                     var messageString = JsonSerializer.Serialize(input);
-                    var byteToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(messageString));
-                    await client.SendAsync(byteToSend, WebSocketMessageType.Text, true, cts.Token);
-                    await client.CloseAsync(WebSocketCloseStatus.Empty, "closed", CancellationToken.None);
+
+                    await Task.WhenAll(Receive(client), Send(client, messageString));
                 }
                 catch (Exception e)
                 {
@@ -37,6 +37,34 @@ namespace WebCastFeed.Operations
                 }
             }
             return true;
+        }
+
+        private static async Task Send(ClientWebSocket ws, string input)
+        {
+            var byteToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(input));
+
+            while (ws.State == WebSocketState.Open)
+            {
+                await ws.SendAsync(byteToSend, WebSocketMessageType.Text, true, CancellationToken.None);
+                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+            }
+        }
+
+        private static async Task Receive(ClientWebSocket ws)
+        {
+            byte[] buffer = new byte[4096];
+            while (ws.State == WebSocketState.Open)
+            {
+                var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                if (result.MessageType == WebSocketMessageType.Close)
+                {
+                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                }
+                else
+                {
+                    Console.WriteLine("Received: " + Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+                }
+            }
         }
     }
 }
