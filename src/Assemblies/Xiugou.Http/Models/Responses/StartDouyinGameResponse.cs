@@ -13,5 +13,11 @@ namespace Xiugou.Http.Models.Responses
 
         [JsonProperty("errmsg")]
         public string ErrorMessage { get; set; }
+
+        [JsonProperty("error")]
+        public int Error { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; }
     }
 }
