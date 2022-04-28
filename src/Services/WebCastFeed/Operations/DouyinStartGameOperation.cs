@@ -27,6 +27,7 @@ namespace WebCastFeed.Operations
             {
                 bool.TryParse(Environment.GetEnvironmentVariable("UseMockData") ?? "true", out bool useMockData);
                 StartDouyinGameResponse response;
+                Console.WriteLine($"Use mock data :{useMockData}");
                 if (useMockData)
                 {
                     response = new StartDouyinGameResponse()
