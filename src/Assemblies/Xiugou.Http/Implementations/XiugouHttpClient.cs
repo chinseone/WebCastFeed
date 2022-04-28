@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,6 +46,19 @@ namespace Xiugou.Http
                 var cancelAfterMillSecs = int.Parse(Environment.GetEnvironmentVariable("CancelAfterMillSecs") ?? "10000");
                 Console.WriteLine($"Cancel after {cancelAfterMillSecs/1000} seconds");
                 cancellationReceiptSource.CancelAfter(cancelAfterMillSecs);
+
+                // ping
+                Ping sender = new Ping();
+                PingReply reply = sender.Send("webcast.bytedance.com");
+
+                if (reply.Status == IPStatus.Success)
+                {
+                    Console.WriteLine("Ping successful.");
+                }
+                else
+                {
+                    Console.WriteLine("Ping failed");
+                }
 
                 HttpResponseMessage response;
 
