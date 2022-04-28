@@ -97,40 +97,34 @@ namespace XiugouWebSocketServer.Middleware
 
         public async Task RouteJsonMessage(string message)
         {
-            try
-            {
-                var routeObj = JsonConvert.DeserializeObject<dynamic>(message);
-                if (Guid.TryParse(routeObj.To.ToString(), out Guid guidOutput))
-                {
-                    var toSocket = _Manager
-                        .GetAllSockets()[guidOutput.ToString()];
-
-                    if (toSocket != null && toSocket.State == WebSocketState.Open) {
-                        await toSocket.SendAsync(Encoding.UTF8.GetBytes(message),
-                        WebSocketMessageType.Text, true, CancellationToken.None);
-                        return;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No Guid, continue");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Input may not necessary be a JSON");
-            }
-
-
-            Console.WriteLine("Broadcast");
-            foreach (var socket in _Manager.GetAllSockets())
+            var allSockets = _Manager.GetAllSockets();
+            Console.WriteLine($"Broadcasting to all {allSockets.Count} listeners...");
+            foreach (var socket in allSockets)
             {
                 if (socket.Value.State == WebSocketState.Open)
                 {
-                    await socket.Value.SendAsync(Encoding.UTF8.GetBytes(message),
+                    var messageToSend = Utf8ToGB2312(message);
+                    await socket.Value.SendAsync(Encoding.UTF8.GetBytes(messageToSend),
                         WebSocketMessageType.Text, true, CancellationToken.None);
                 }
             }
+        }
+
+        public static string Utf8ToGB2312(string utf8String)
+        {
+            var fromEncoding = Encoding.UTF8;
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var toEncoding = Encoding.GetEncoding("GB2312");
+            return EncodingConvert(utf8String, fromEncoding, toEncoding);
+        }
+
+        public static string EncodingConvert(string fromString, Encoding fromEncoding, Encoding toEncoding)
+        {
+            byte[] fromBytes = fromEncoding.GetBytes(fromString);
+            byte[] toBytes = Encoding.Convert(fromEncoding, toEncoding, fromBytes);
+
+            string toString = toEncoding.GetString(toBytes);
+            return toString;
         }
     }
 }
