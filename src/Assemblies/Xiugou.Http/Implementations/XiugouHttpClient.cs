@@ -36,6 +36,7 @@ namespace Xiugou.Http
         {
             var cancellationReceiptSource = new CancellationTokenSource();
             var querystring = $"";
+            Console.WriteLine($"Ready to send http request...");
 
             try
             {
@@ -60,7 +61,8 @@ namespace Xiugou.Http
                     var request = CreateRequest(httpMethod, path, querystring, inputModel, headers);
                     response = await SendAsync(
                         request,
-                        CancellationToken.None).ConfigureAwait(false);
+                        cancellationReceiptSource.Token).ConfigureAwait(false);
+                    Console.WriteLine("Successfully sent request..");
                 }
 
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -68,7 +70,7 @@ namespace Xiugou.Http
                 if (response.IsSuccessStatusCode)
                 {
                     var unwrappedResponse = JsonConvert.DeserializeObject<TOutput>(content);
-
+                    Console.WriteLine("Successfully Deserialized Object");
                     // var unwrappedResponse = returnStringResult ?
                     //     CastUtil.To<TOutput>(content) :
                     //     JsonConvert.DeserializeObject<TOutput>(content);
@@ -92,9 +94,10 @@ namespace Xiugou.Http
             IDictionary<string, object> inputModel = null,
             IDictionary<string, string> headers = null)
         {
+            var httpContent = inputModel == null ? GetContent(new { }) : GetContent(inputModel);
             var request = new HttpRequestMessage()
             {
-                Content = inputModel == null ? GetContent(new { }) : GetContent(inputModel),
+                Content = httpContent,
                 Method = httpMethod,
                 RequestUri = new Uri(BaseAddress + path + querystring)
             };
@@ -106,16 +109,18 @@ namespace Xiugou.Http
 
             foreach (var header in headers)
             {
-                Console.WriteLine($"HttpClient Header ----- {header.Key} ： {header.Value}");
                 request.Headers.Add(header.Key, header.Value);
             }
+
+            Console.WriteLine($"Successfully created request");
 
             return request;
         }
 
         private HttpContent GetContent(object o)
         {
-            return new StringContent(JsonConvert.SerializeObject(o), Encoding.UTF8, "application/json");
+            var content = JsonConvert.SerializeObject(o);
+            return new StringContent(content, Encoding.UTF8, "application/json");
         }
 
         private string GetQueryString(IDictionary<string, object> queryStringParams)
