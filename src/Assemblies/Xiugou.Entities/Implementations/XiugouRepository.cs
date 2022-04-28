@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -91,11 +92,13 @@ namespace Xiugou.Entities.Implementations
             }
         }
 
-        public async Task<Session> GetSessionByAnchorId(string anchorId)
+        public async Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId)
         {
             return await _XiugouDbContext.Sessions
-                .SingleOrDefaultAsync(s => s.AnchorId.Equals(anchorId))
-                .ConfigureAwait(false);
+                .Where(s => s.AnchorId.Equals(anchorId))
+                .Where(s => s.IsActive)
+                .OrderByDescending(entity => EF.Property<DateTime>(entity, "CreatedUtc"))
+                .FirstAsync().ConfigureAwait(false);
         }
     }
 }

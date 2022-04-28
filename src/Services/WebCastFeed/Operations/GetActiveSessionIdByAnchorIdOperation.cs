@@ -20,9 +20,9 @@ namespace WebCastFeed.Operations
         {
             var sanitizedAnchorId = HttpUtility.UrlEncode(anchorId); // in case of SQL injection
 
-            var session = await _XiugouRepository.GetSessionByAnchorId(sanitizedAnchorId);
+            var session = await _XiugouRepository.GetMostRecentActiveSessionByAnchorId(sanitizedAnchorId);
 
-            if (session == null || !session.IsActive)
+            if (session == null)
             {
                 return null;
             }

@@ -49,11 +49,13 @@ namespace WebCastFeed.Operations
                     };
                 }
 
+                var utcNow = DateTime.UtcNow;
                 var session = new Session()
                 {
                     AnchorId = input.AnchorId,
                     SessionId = input.SessionId,
-                    IsActive = false
+                    IsActive = false,
+                    UpdatedUtc = utcNow
                 };
 
                 await _XiugouRepository.UpdateSessionBySessionId(session);

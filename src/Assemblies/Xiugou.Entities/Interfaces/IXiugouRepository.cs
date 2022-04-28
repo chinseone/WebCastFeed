@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xiugou.Entities.Enums;
 
 namespace Xiugou.Entities.Entities
@@ -19,6 +20,6 @@ namespace Xiugou.Entities.Entities
 
         Task UpdateSessionBySessionId(Session session);
 
-        Task<Session> GetSessionByAnchorId(string anchorId);
+        Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId);
     }
 }

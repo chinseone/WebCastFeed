@@ -52,11 +52,14 @@ namespace WebCastFeed.Operations
                     };
                 }
 
+                var now = DateTime.UtcNow;
                 var session = new Session()
                 {
                     AnchorId = input.AnchorId,
                     SessionId = response.SessionId,
-                    IsActive = true
+                    IsActive = true,
+                    CreatedUtc = now,
+                    UpdatedUtc = now
                 };
 
                 _XiugouRepository.Save(session);
