@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -37,9 +38,10 @@ namespace Xiugou.Http
             var cancellationReceiptSource = new CancellationTokenSource();
             var querystring = $"";
             Console.WriteLine($"Ready to send http request...");
-
+            var sw = new Stopwatch();
             try
             {
+                sw.Start();
                 var cancelAfterMillSecs = int.Parse(Environment.GetEnvironmentVariable("CancelAfterMillSecs") ?? "10000");
                 Console.WriteLine($"Cancel after {cancelAfterMillSecs/1000} seconds");
                 cancellationReceiptSource.CancelAfter(cancelAfterMillSecs);
@@ -67,6 +69,8 @@ namespace Xiugou.Http
                         .ConfigureAwait(false);
                     Console.WriteLine("Successfully sent request..");
                 }
+                sw.Stop();
+                Console.WriteLine($"A success request costs ${sw.ElapsedMilliseconds}");
 
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -84,6 +88,8 @@ namespace Xiugou.Http
             }
             catch(Exception e)
             {
+                sw.Stop();
+                Console.WriteLine($"A failed request costs ${sw.ElapsedMilliseconds}");
                 Console.WriteLine("Request url: " + BaseAddress + path + querystring);
                 Console.WriteLine($"An error has occurred, {e}");
                 throw;
