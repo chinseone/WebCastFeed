@@ -40,7 +40,9 @@ namespace Xiugou.Http
 
             try
             {
-                cancellationReceiptSource.CancelAfter(Timeout);
+                var cancelAfterMillSecs = int.Parse(Environment.GetEnvironmentVariable("CancelAfterMillSecs") ?? "10000");
+                Console.WriteLine($"Cancel after {cancelAfterMillSecs/1000} seconds");
+                cancellationReceiptSource.CancelAfter(cancelAfterMillSecs);
 
                 HttpResponseMessage response;
 
@@ -61,7 +63,8 @@ namespace Xiugou.Http
                     var request = CreateRequest(httpMethod, path, querystring, inputModel, headers);
                     response = await SendAsync(
                         request,
-                        cancellationReceiptSource.Token).ConfigureAwait(false);
+                        cancellationReceiptSource.Token)
+                        .ConfigureAwait(false);
                     Console.WriteLine("Successfully sent request..");
                 }
 
@@ -84,6 +87,10 @@ namespace Xiugou.Http
                 Console.WriteLine("Request url: " + BaseAddress + path + querystring);
                 Console.WriteLine($"An error has occurred, {e}");
                 throw;
+            }
+            finally
+            {
+                cancellationReceiptSource.Dispose();
             }
         }
 
