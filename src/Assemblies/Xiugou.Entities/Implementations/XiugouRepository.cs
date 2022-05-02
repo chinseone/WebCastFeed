@@ -105,5 +105,19 @@ namespace Xiugou.Entities.Implementations
                 .OrderByDescending(entity => EF.Property<DateTime>(entity, "CreatedUtc"))
                 .FirstAsync().ConfigureAwait(false);
         }
+
+        public int Save(H5Profile profile)
+        {
+            _XiugouDbContext.H5Profiles.Add(profile);
+            return _XiugouDbContext.SaveChanges();
+        }
+
+        public async Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname)
+        {
+            return await _XiugouDbContext.H5Profiles
+                .Where(p => p.Platform == platform)
+                .Where(p => p.Nickname.Equals(nickname))
+                .FirstAsync().ConfigureAwait(false);
+        }
     }
 }

@@ -15,6 +15,8 @@ namespace Xiugou.Entities.Implementations
 
         public DbSet<Session> Sessions { get; set; }
 
+        public DbSet<H5Profile> H5Profiles { get; set; }
+
         public XiugouDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,6 +37,11 @@ namespace Xiugou.Entities.Implementations
 
             // Session
             modelBuilder.Entity<Session>().HasKey(s => s.Id);
+
+            // H5Profile
+            modelBuilder.Entity<H5Profile>().HasKey(s => s.Id);
+            modelBuilder.Entity<H5Profile>().Property(e => e.Platform)
+                .HasConversion(new EnumToNumberConverter<Platform, int>());
 
             base.OnModelCreating(modelBuilder);
         }
