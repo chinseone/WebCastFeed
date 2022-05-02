@@ -101,11 +101,20 @@ namespace XiugouWebSocketServer.Middleware
             Console.WriteLine($"Broadcasting to all {allSockets.Count} listeners...");
             foreach (var socket in allSockets)
             {
-                if (socket.Value.State == WebSocketState.Open)
+                while (socket.Value.State == WebSocketState.Open)
                 {
                     var messageToSend = Utf8ToGB2312(message);
-                    await socket.Value.SendAsync(Encoding.UTF8.GetBytes(messageToSend),
-                        WebSocketMessageType.Text, true, CancellationToken.None);
+                    try
+                    {
+                        await socket.Value.SendAsync(Encoding.UTF8.GetBytes(messageToSend),
+                            WebSocketMessageType.Text, true, CancellationToken.None);
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Exception while sending json to all sockets");
+                        break;
+                    }
                 }
             }
         }
