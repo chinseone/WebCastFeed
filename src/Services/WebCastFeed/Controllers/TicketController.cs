@@ -55,6 +55,17 @@ namespace WebCastFeed.Controllers
             return Ok(res);
         }
 
+        [HttpPost("all")]
+        public IActionResult GetAllTickets(
+            [FromBody] GetAllTicketsRequest request,
+            [FromServices] GetAllTicketsOperation operation,
+            CancellationToken cancellationToken)
+        {
+            var res = _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
+                string, GetTicketByCodeResponse>(operation, code, cancellationToken);
+            return Ok(res);
+        }
+
         [HttpGet]
         public IActionResult GetTicketByCode(
             [FromQuery]string code,
