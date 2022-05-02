@@ -1,20 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Models.Requests;
 using WebCastFeed.Models.Response;
+using Xiugou.Entities.Entities;
 
 namespace WebCastFeed.Operations
 {
     public class GetAllTicketsOperation : IAsyncOperation<GetAllTicketsRequest, List<GetTicketByCodeResponse>>
     {
+        private readonly IXiugouRepository _XiugouRepository;
+
+        public GetAllTicketsOperation(IXiugouRepository xiugouRepository)
+        {
+            _XiugouRepository = xiugouRepository ?? throw new ArgumentNullException(nameof(xiugouRepository));
+        }
+
         public async ValueTask<List<GetTicketByCodeResponse>> ExecuteAsync(GetAllTicketsRequest input, CancellationToken cancellationToken = default)
         {
             if (ValidateInputSignature(input))
             {
-                
+                var allTickets = await _XiugouRepository.GetAllTickets();
+
+                return allTickets.Select(t => new GetTicketByCodeResponse()
+                {
+                    Code = t.Code,
+                    Event = t.Event?.ToString(),
+                    IsActivated = t.IsActivated,
+                    IsClaimed = t.IsClaimed,
+                    IsDistributed = t.IsDistributed,
+                    TicketType = t.TicketType
+                }).OrderBy(tt => tt.TicketType).ToList();
             }
 
             return new List<GetTicketByCodeResponse>();
@@ -35,13 +54,12 @@ namespace WebCastFeed.Operations
 
         private static string CreateMd5(string input)
         {
-            // Use input string to calculate MD5 hash
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            using (var md5 = System.Security.Cryptography.MD5.Create())
             {
-                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                var inputBytes = Encoding.ASCII.GetBytes(input);
+                var hashBytes = md5.ComputeHash(inputBytes);
 
-                StringBuilder sb = new System.Text.StringBuilder();
+                var sb = new StringBuilder();
                 for (int i = 0; i < hashBytes.Length; i++)
                 {
                     sb.Append(hashBytes[i].ToString("X2"));

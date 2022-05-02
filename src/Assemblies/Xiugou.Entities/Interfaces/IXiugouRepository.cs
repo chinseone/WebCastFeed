@@ -10,6 +10,8 @@ namespace Xiugou.Entities.Entities
 
         Task<Ticket> GetTicketByCode(string code);
 
+        Task<List<Ticket>> GetAllTickets();
+
         Task UpdateTicket(Ticket ticket);
 
         int Save(User user);
