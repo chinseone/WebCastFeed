@@ -9,5 +9,8 @@ namespace WebCastFeed.Models.Requests
 
         [JsonProperty("timestamp")]
         public long TimeStamp { get; set; }
+
+        [JsonProperty("signature")]
+        public string Signature { get; set; }
     }
 }

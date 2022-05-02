@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebCastFeed.Models.Requests;
 using WebCastFeed.Models.Response;
@@ -56,13 +58,19 @@ namespace WebCastFeed.Controllers
         }
 
         [HttpPost("all")]
-        public IActionResult GetAllTickets(
+        public async Task<IActionResult> GetAllTickets(
             [FromBody] GetAllTicketsRequest request,
             [FromServices] GetAllTicketsOperation operation,
             CancellationToken cancellationToken)
         {
-            var res = _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
-                string, GetTicketByCodeResponse>(operation, code, cancellationToken);
+            var res = await _OperationExecutor.ExecuteAsync<GetAllTicketsOperation,
+                GetAllTicketsRequest, List<GetTicketByCodeResponse>>(operation, request, cancellationToken);
+
+            if (res == null || res.Count == 0)
+            {
+                return Unauthorized("Request is unauthorized");
+            }
+
             return Ok(res);
         }
 
