@@ -30,6 +30,11 @@ namespace Xiugou.Entities.Implementations
             return _XiugouDbContext.SaveChanges();
         }
 
+        public async Task<List<Ticket>> GetAllTickets()
+        {
+            return await _XiugouDbContext.Tickets.ToListAsync();
+        }
+
         public async Task UpdateTicket(Ticket ticket)
         {
             await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();

@@ -46,6 +46,7 @@ namespace WebCastFeed
             services.AddScoped<GetTicketByCodeOperation>();
             services.AddScoped<DouyinStartGameOperation>();
             services.AddScoped<DouyinStopGameOperation>();
+            services.AddScoped<GetAllTicketsOperation>();
             services.AddScoped<GetActiveSessionIdByAnchorIdOperation>();
         }
 
