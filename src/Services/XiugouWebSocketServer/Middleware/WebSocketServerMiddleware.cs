@@ -60,11 +60,21 @@ namespace XiugouWebSocketServer.Middleware
 
                         _Manager.GetAllSockets().TryRemove(id, out WebSocket sock);
 
-                        await sock.CloseAsync(
+                        if (sock.State == WebSocketState.Open)
+                        {
+                            try
+                            {
+                                await sock.CloseAsync(
                                     result.CloseStatus.Value,
                                     result.CloseStatusDescription,
                                     CancellationToken.None);
-
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Close socket threw exception");
+                            }
+                        }
+                        
                         Console.WriteLine("Received closed message");
                     }
                 });
