@@ -22,9 +22,9 @@ namespace WebCastFeed.WebSocket
             await CreateNewTransportAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task SendAsync(List<DouyinMessage> request, IAsyncTransport transport)
+        public async Task SendAsync(List<DouyinMessage> request)
         {
-            await transport.SendAsync(request, CancellationToken.None).ConfigureAwait(false);
+            await _RootTransport.SendAsync(request, CancellationToken.None).ConfigureAwait(false);
         }
 
         private void OnTransportClosed(object sender, TransportClosedEventArgs args)

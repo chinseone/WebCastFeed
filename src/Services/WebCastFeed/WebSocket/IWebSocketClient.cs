@@ -9,6 +9,6 @@ namespace WebCastFeed.WebSocket
     {
         Task InitializeAsync(CancellationToken cancellationToken);
 
-        Task SendAsync(List<DouyinMessage> request, IAsyncTransport transport);
+        Task SendAsync(List<DouyinMessage> request);
     }
 }
