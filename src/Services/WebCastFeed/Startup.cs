@@ -1,12 +1,15 @@
 using System;
 using System.Reflection.Metadata;
+using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Primitives;
 using WebCastFeed.Operations;
+using WebCastFeed.WebSocket;
 using Xiugou.Entities.Entities;
 using Xiugou.Entities.Implementations;
 using Xiugou.Http;
@@ -38,6 +41,9 @@ namespace WebCastFeed
 
             services.AddScoped<IXiugouRepository, XiugouRepository>();
 
+            services.AddSingleton(sp =>
+                CreateWebSocketClient(CancellationToken.None));
+
             services.AddSingleton<OperationExecutor>();
             services.AddScoped<ValidateDouyinWebhookOperation>();
             services.AddScoped<HandleLiveFeedOperation>();
@@ -48,6 +54,22 @@ namespace WebCastFeed
             services.AddScoped<DouyinStopGameOperation>();
             services.AddScoped<GetAllTicketsOperation>();
             services.AddScoped<GetActiveSessionIdByAnchorIdOperation>();
+        }
+
+        private static IWebSocketClient CreateWebSocketClient(CancellationToken cancellationToken)
+        {
+            var serverShutdownTime = int.Parse(Environment.GetEnvironmentVariable("ServerShutdownTime") ?? "3");
+            EventHandler<TransportClosedEventArgs> transportClosedHandler = async (obj, args) =>
+            {
+                // Kill the whole program if a websocket transport closes
+                // await _Host?.StopAsync(TimeSpan.FromSeconds(serverShutdownTime));
+            };
+
+            var websocketUri = Environment.GetEnvironmentVariable("WebSocketServerUri") ?? "ws://localhost:6000/douyin/chat";
+            var maxRetries = int.Parse(Environment.GetEnvironmentVariable("WebSocketConnectionMaxRetries") ?? "5");
+            var transportFactory = new WebSocketTransportFactory(websocketUri, 443, maxRetries, transportClosedHandler);
+
+            return new WebSocketClient(transportFactory);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
