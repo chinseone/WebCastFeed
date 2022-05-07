@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using WebCastFeed.Models.Requests;
 
 namespace WebCastFeed.WebSocket
@@ -366,7 +366,7 @@ namespace WebCastFeed.WebSocket
 
         private string SerializeRequest(List<DouyinMessage> request)
         {
-            return JsonConvert.SerializeObject(request);
+            return JsonSerializer.Serialize(request);
         }
 
         private async Task ConnectAsync(string uri, CancellationToken cancellationToken)

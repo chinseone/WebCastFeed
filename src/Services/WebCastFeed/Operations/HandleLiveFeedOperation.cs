@@ -22,7 +22,7 @@ namespace WebCastFeed.Operations
         public async ValueTask<bool> ExecuteAsync(List<DouyinMessage> input, CancellationToken cancellationToken = default)
         {
             Console.WriteLine("A handle live feed request is started");
-            var webSocketServerAddress = Environment.GetEnvironmentVariable("WebSocketServerAddress") ?? "ws://localhost:5000";
+            var webSocketServerAddress = Environment.GetEnvironmentVariable("WebSocketServerAddress") ?? "ws://localhost:6000";
 
             Console.WriteLine($"ws server address: {webSocketServerAddress}");
 
