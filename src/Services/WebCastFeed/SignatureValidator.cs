@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using WebCastFeed.Models.Requests;
 
 namespace WebCastFeed
@@ -19,7 +20,13 @@ namespace WebCastFeed
             Console.WriteLine($"Validate signature: {sigValidationEnabled}");
             if (sigValidationEnabled)
             {
-
+                Console.WriteLine($"cmd={cmd}");
+                Console.WriteLine($"timestamp={timestamp}");
+                Console.WriteLine($"version={version}");
+                Console.WriteLine($"push_id={push_id}");
+                Console.WriteLine($"nonce_str={nonce_str}");
+                Console.WriteLine($"signature={signature}");
+                Console.WriteLine($"body={JsonConvert.SerializeObject(request)}");
             }
             return true;
         }
