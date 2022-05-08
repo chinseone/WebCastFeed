@@ -56,8 +56,15 @@ namespace WebCastFeed.Operations
 
             while (ws.State == WebSocketState.Open)
             {
-                await ws.SendAsync(byteToSend, WebSocketMessageType.Text, true, CancellationToken.None);
-                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                try
+                {
+                    await ws.SendAsync(byteToSend, WebSocketMessageType.Text, true, CancellationToken.None);
+                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
@@ -66,14 +73,21 @@ namespace WebCastFeed.Operations
             byte[] buffer = new byte[4096];
             while (ws.State == WebSocketState.Open)
             {
-                var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                if (result.MessageType == WebSocketMessageType.Close)
+                try
                 {
-                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                    var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                    if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Received: " + Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine("Received: " + Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+                    Console.WriteLine(e);
                 }
             }
         }

@@ -8,6 +8,10 @@ namespace Xiugou.Entities.Entities
 
         DbSet<User> Users { get; set; }
 
+        DbSet<Session> Sessions { get; set; }
+
+        DbSet<H5Profile> H5Profiles { get; set; }
+
         int SaveChanges();
     }
 }
