@@ -26,5 +26,14 @@ namespace WebCastFeed.Controllers
             CancellationToken cancellationToken)
             => _OperationExecutor.ExecuteAsync<CreateH5ProfileOperation,
                 CreateH5ProfileRequest, CreateH5ProfileResponse>(operation, request, cancellationToken);
+
+        [HttpGet("profile")]
+        [Consumes("application/json")]
+        public ValueTask<GetH5ProfileResponse> GetH5Profile(
+            [FromForm] GetH5ProfileRequest request,
+            [FromServices] GetH5ProfileOperation operation,
+            CancellationToken cancellationToken)
+        => _OperationExecutor.ExecuteAsync<GetH5ProfileOperation,
+            GetH5ProfileRequest, GetH5ProfileResponse>(operation, request, cancellationToken);
     }
 }
