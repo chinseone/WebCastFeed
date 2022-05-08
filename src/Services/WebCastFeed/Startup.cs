@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
+using StackExchange.Redis;
 using WebCastFeed.Operations;
 using WebCastFeed.WebSocket;
 using Xiugou.Entities.Entities;
@@ -39,6 +40,10 @@ namespace WebCastFeed
             var douyinBaseUrl = Environment.GetEnvironmentVariable("DouyinBaseUrl");
             services.AddScoped<IDouyinClient>(p => new DouyinClient(douyinBaseUrl));
 
+            var redisConnection = Environment.GetEnvironmentVariable("RedisConnection") ?? "127.0.0.1:6379";
+            services.AddSingleton<IConnectionMultiplexer>(opt =>
+                ConnectionMultiplexer.Connect(redisConnection));
+
             services.AddScoped<IXiugouRepository, XiugouRepository>();
 
             services.AddSingleton(sp =>
@@ -54,6 +59,7 @@ namespace WebCastFeed
             services.AddScoped<DouyinStopGameOperation>();
             services.AddScoped<GetAllTicketsOperation>();
             services.AddScoped<GetActiveSessionIdByAnchorIdOperation>();
+            services.AddScoped<CreateH5ProfileOperation>();
         }
 
         private static IWebSocketClient CreateWebSocketClient(CancellationToken cancellationToken)

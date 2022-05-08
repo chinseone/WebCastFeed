@@ -8,14 +8,19 @@ namespace WebCastFeed.Models.Requests
         [JsonPropertyName("role")]
         public int Role { get; set; }
 
+        [JsonPropertyName("items")]
         public string Items { get; set; }
 
+        [JsonPropertyName("title")]
         public string Title { get; set; }
 
+        [JsonPropertyName("platform")]
         public Platform Platform { get; set; }
 
+        [JsonPropertyName("nickname")]
         public string Nickname { get; set; }
 
+        [JsonPropertyName("ticketId")]
         public long TicketId { get; set; }
     }
 }

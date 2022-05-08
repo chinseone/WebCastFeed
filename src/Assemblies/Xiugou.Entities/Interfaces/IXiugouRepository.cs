@@ -28,7 +28,7 @@ namespace Xiugou.Entities.Entities
         Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId);
 
         // H5Profile
-        int Save(H5Profile profile);
+        Task CreateH5Profile(H5Profile profile);
 
         Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname);
     }

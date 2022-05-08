@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebCastFeed.Models.Requests;
+using WebCastFeed.Models.Response;
 using WebCastFeed.Operations;
 
 namespace WebCastFeed.Controllers
@@ -18,12 +19,12 @@ namespace WebCastFeed.Controllers
         }
 
         [HttpPost("profile")]
-        [Consumes("application/json")]
-        public ValueTask<bool> CreateH5Profile(
-            [FromBody] CreateH5ProfileRequest request,
+        [Consumes("application/x-www-form-urlencoded")]
+        public ValueTask<CreateH5ProfileResponse> CreateH5Profile(
+            [FromForm] CreateH5ProfileRequest request,
             [FromServices] CreateH5ProfileOperation operation,
             CancellationToken cancellationToken)
             => _OperationExecutor.ExecuteAsync<CreateH5ProfileOperation,
-                CreateH5ProfileRequest, bool>(operation, request, cancellationToken);
+                CreateH5ProfileRequest, CreateH5ProfileResponse>(operation, request, cancellationToken);
     }
 }

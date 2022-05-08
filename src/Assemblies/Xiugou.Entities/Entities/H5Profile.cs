@@ -1,13 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Xiugou.Entities.Enums;
 
 namespace Xiugou.Entities.Entities
 {
     public class H5Profile
     {
-        public long Id { get; set; }
+        [Required]
+        public string Id { get; set; } = $"h5profile:{Guid.NewGuid().ToString()}";
 
-        public string Role { get; set; }
+        public int Role { get; set; }
 
         public string Items { get; set; }
 
@@ -18,9 +20,5 @@ namespace Xiugou.Entities.Entities
         public string Nickname { get; set; }
 
         public long TicketId { get; set; }
-
-        public DateTime CreatedUtc { get; set; }
-
-        public DateTime UpdatedUtc { get; set; }
     }
 }

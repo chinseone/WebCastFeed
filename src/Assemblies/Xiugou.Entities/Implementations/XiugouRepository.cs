@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using Xiugou.Entities.Entities;
 using Xiugou.Entities.Enums;
 
@@ -11,10 +13,12 @@ namespace Xiugou.Entities.Implementations
     public class XiugouRepository : IXiugouRepository
     {
         private readonly XiugouDbContext _XiugouDbContext;
+        private readonly IConnectionMultiplexer _ConnectionMultiplexer;
 
-        public XiugouRepository(XiugouDbContext xiugouDbContext)
+        public XiugouRepository(XiugouDbContext xiugouDbContext, IConnectionMultiplexer connectionMultiplexer)
         {
             _XiugouDbContext = xiugouDbContext ?? throw new ArgumentNullException(nameof(xiugouDbContext));
+            _ConnectionMultiplexer = connectionMultiplexer ?? throw new ArgumentNullException(nameof(connectionMultiplexer));
         }
 
         public async Task<Ticket> GetTicketByCode(string code)
@@ -106,18 +110,32 @@ namespace Xiugou.Entities.Implementations
                 .FirstAsync().ConfigureAwait(false);
         }
 
-        public int Save(H5Profile profile)
+        public async Task CreateH5Profile(H5Profile profile)
         {
-            _XiugouDbContext.H5Profiles.Add(profile);
-            return _XiugouDbContext.SaveChanges();
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            var serialProfile = JsonSerializer.Serialize(profile);
+
+            db.StringSet($"{profile.Platform}:{profile.Nickname}", serialProfile);
         }
 
         public async Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname)
         {
-            return await _XiugouDbContext.H5Profiles
-                .Where(p => p.Platform == platform)
-                .Where(p => p.Nickname.Equals(nickname))
-                .FirstAsync().ConfigureAwait(false);
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            var profile = await db.StringGetAsync($"{platform}:{nickname}");
+
+            if (!string.IsNullOrEmpty(profile))
+            {
+                return JsonSerializer.Deserialize<H5Profile>(profile);
+            }
+
+            return null;
         }
     }
 }
