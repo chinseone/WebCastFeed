@@ -60,6 +60,7 @@ namespace WebCastFeed
             services.AddScoped<GetAllTicketsOperation>();
             services.AddScoped<GetActiveSessionIdByAnchorIdOperation>();
             services.AddScoped<CreateH5ProfileOperation>();
+            services.AddScoped<GetH5ProfileOperation>();
         }
 
         private static IWebSocketClient CreateWebSocketClient(CancellationToken cancellationToken)

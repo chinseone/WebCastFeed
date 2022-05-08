@@ -30,7 +30,7 @@ namespace WebCastFeed.Controllers
         [HttpGet("profile")]
         [Consumes("application/json")]
         public ValueTask<GetH5ProfileResponse> GetH5Profile(
-            [FromForm] GetH5ProfileRequest request,
+            [FromBody] GetH5ProfileRequest request,
             [FromServices] GetH5ProfileOperation operation,
             CancellationToken cancellationToken)
         => _OperationExecutor.ExecuteAsync<GetH5ProfileOperation,

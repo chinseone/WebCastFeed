@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using WebCastFeed.Models.Requests;
 using WebCastFeed.Models.Response;
 using Xiugou.Entities.Entities;
+using Xiugou.Entities.Enums;
 
 namespace WebCastFeed.Operations
 {
@@ -18,17 +21,31 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<GetH5ProfileResponse> ExecuteAsync(GetH5ProfileRequest input, CancellationToken cancellationToken = default)
         {
-            var result = await _XiugouRepository.GetH5ProfileByPlatformAndNickname(input.Platform, input.Nickname);
-
-            return new GetH5ProfileResponse()
+            try
             {
-                Items = result.Items,
-                Nickname = result.Nickname,
-                Platform = result.Platform,
-                Role = result.Role,
-                TicketId = result.TicketId,
-                Title = result.Title
-            };
+                var plat = (Platform)input.Platform;
+                var nickname = HttpUtility.UrlEncode(Encoding.UTF8.GetBytes(input.Nickname));
+                var result = await _XiugouRepository.GetH5ProfileByPlatformAndNickname(plat, nickname);
+                if (result == null)
+                {
+                    return null;
+                }
+
+                return new GetH5ProfileResponse()
+                {
+                    Items = result.Items,
+                    Nickname = HttpUtility.UrlDecode(nickname),
+                    Platform = result.Platform,
+                    Role = result.Role,
+                    TicketId = result.TicketId,
+                    Title = result.Title
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
     }
 }
