@@ -40,9 +40,9 @@ namespace WebCastFeed
             var douyinBaseUrl = Environment.GetEnvironmentVariable("DouyinBaseUrl");
             services.AddScoped<IDouyinClient>(p => new DouyinClient(douyinBaseUrl));
 
-            var redisConnection = Environment.GetEnvironmentVariable("RedisConnection") ?? "127.0.0.1:6379";
-            services.AddSingleton<IConnectionMultiplexer>(opt =>
-                ConnectionMultiplexer.Connect(redisConnection));
+            // var redisConnection = Environment.GetEnvironmentVariable("RedisConnection") ?? "127.0.0.1:6379";
+            // services.AddSingleton<IConnectionMultiplexer>(opt =>
+            //     ConnectionMultiplexer.Connect(redisConnection));
 
             services.AddScoped<IXiugouRepository, XiugouRepository>();
 

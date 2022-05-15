@@ -25,21 +25,22 @@ namespace WebCastFeed.Operations
             {
                 var plat = (Platform)input.Platform;
                 var nickname = HttpUtility.UrlEncode(Encoding.UTF8.GetBytes(input.Nickname));
-                var result = await _XiugouRepository.GetH5ProfileByPlatformAndNickname(plat, nickname);
-                if (result == null)
-                {
-                    return null;
-                }
+                // var result = null; // await _XiugouRepository.GetH5ProfileByPlatformAndNickname(plat, nickname);
+                // if (result == null)
+                // {
+                //     
+                // }
+                return null;
 
-                return new GetH5ProfileResponse()
-                {
-                    Items = result.Items,
-                    Nickname = HttpUtility.UrlDecode(nickname),
-                    Platform = result.Platform,
-                    Role = result.Role,
-                    TicketId = result.TicketId,
-                    Title = result.Title
-                };
+                // return new GetH5ProfileResponse()
+                // {
+                //     Items = result.Items,
+                //     Nickname = HttpUtility.UrlDecode(nickname),
+                //     Platform = result.Platform,
+                //     Role = result.Role,
+                //     TicketId = result.TicketId,
+                //     Title = result.Title
+                // };
             }
             catch (Exception e)
             {
