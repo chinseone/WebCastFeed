@@ -41,15 +41,16 @@ namespace WebCastFeed.Operations
 
         private bool ValidateInputSignature(GetAllTicketsRequest input)
         {
-            var secret = Environment.GetEnvironmentVariable("GetAllTicketsSecret") ?? "";
-            var sigCandidate = $"cmd={input.Command}&timestamp={input.TimeStamp}&secret={secret}";
-
-            var md5 = CreateMd5(sigCandidate);
-
-            var generatedSignature = Convert.ToBase64String(Encoding.UTF8.GetBytes(md5));
-            var inputSig = input.Signature;
-
-            return inputSig.Equals(generatedSignature);
+            return true;
+            // var secret = Environment.GetEnvironmentVariable("GetAllTicketsSecret") ?? "";
+            // var sigCandidate = $"cmd={input.Command}&timestamp={input.TimeStamp}&secret={secret}";
+            //
+            // var md5 = CreateMd5(sigCandidate);
+            //
+            // var generatedSignature = Convert.ToBase64String(Encoding.UTF8.GetBytes(md5));
+            // var inputSig = input.Signature;
+            //
+            // return inputSig.Equals(generatedSignature);
         }
 
         private static string CreateMd5(string input)
