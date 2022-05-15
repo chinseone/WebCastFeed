@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WebCastFeed.Enums;
 using WebCastFeed.Models.Requests;
 using Xiugou.Entities.Entities;
+using Xiugou.Entities.Enums;
 
 namespace WebCastFeed.Operations
 {
@@ -44,14 +45,48 @@ namespace WebCastFeed.Operations
             };
             var toState = GetTicketCurrentState(toTicket);
 
-            if(_TicketStateTransferMap[fromState] != toState)
+            if (_TicketStateTransferMap[fromState] != toState)
             {
                 return false;
             }
 
             await _XiugouRepository.UpdateTicket(toTicket);
-            
-            return true;
+
+            var user = await _XiugouRepository.GetUserByUserIdAndPlatform(input.UserId, (Platform)input.Platform);
+            if (user == null)
+            {
+                // First create a user no matter what
+                var now = DateTime.UtcNow;
+                user = new User()
+                {
+                    UserId = input.UserId,
+                    Platform = (Platform)input.Platform,
+                    NickName = input.Nickname,
+                    MessageCount = 0,
+                    TotalPay = 0,
+                    TotalPayGuest = 0,
+                    JoinTimestamp = now,
+                    LastTimestamp = now,
+                    CreatedUtc = now,
+                    UpdatedUtc = now,
+                };
+            }
+
+            // ticket code comes in with danmu
+            if (!targetTicket.IsActivated)
+            {
+                user.TicketId = (int)targetTicket.Id;
+                _XiugouRepository.Save(user);
+                return true;
+            }
+
+            if (user.TicketId.HasValue &&
+                user.TicketId == (int)targetTicket.Id)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsValidTicket(Ticket ticket)
