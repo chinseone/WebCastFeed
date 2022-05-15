@@ -4,12 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebCastFeed.Enums;
 using WebCastFeed.Models.Requests;
+using WebCastFeed.Models.Response;
 using Xiugou.Entities.Entities;
 using Xiugou.Entities.Enums;
 
 namespace WebCastFeed.Operations
 {
-    public class UpdateTicketOperation : IAsyncOperation<UpdateTicketRequest, bool>
+    public class UpdateTicketOperation : IAsyncOperation<UpdateTicketRequest, UpdateTicketResponse>
     {
         private readonly IXiugouRepository _XiugouRepository;
         private readonly Dictionary<TicketState, TicketState> _TicketStateTransferMap 
@@ -25,12 +26,18 @@ namespace WebCastFeed.Operations
             _XiugouRepository = xiugouRepository ?? throw new ArgumentNullException(nameof(xiugouRepository));
         }
 
-        public async ValueTask<bool> ExecuteAsync(UpdateTicketRequest input, CancellationToken cancellationToken = default)
+        public async ValueTask<UpdateTicketResponse> ExecuteAsync(UpdateTicketRequest input, CancellationToken cancellationToken = default)
         {
             var targetTicket = await _XiugouRepository.GetTicketByCode(input.TicketCode);
             if (!IsValidTicket(targetTicket))
             {
-                return false;
+                return new UpdateTicketResponse()
+                {
+                    Success = false,
+                    Platform = input.Platform,
+                    TicketCode = "",
+                    UserId = input.UserId
+                };
             }
 
             var fromState = GetTicketCurrentState(targetTicket);
@@ -47,7 +54,13 @@ namespace WebCastFeed.Operations
 
             if (_TicketStateTransferMap[fromState] != toState)
             {
-                return false;
+                return new UpdateTicketResponse()
+                {
+                    Success = false,
+                    Platform = input.Platform,
+                    TicketCode = "",
+                    UserId = input.UserId
+                };
             }
 
             await _XiugouRepository.UpdateTicket(toTicket);
@@ -83,10 +96,22 @@ namespace WebCastFeed.Operations
             if (user.TicketId.HasValue &&
                 user.TicketId == (int)targetTicket.Id)
             {
-                return true;
+                return new UpdateTicketResponse()
+                {
+                    Success = true,
+                    Platform = input.Platform,
+                    TicketCode = targetTicket.Code,
+                    UserId = input.UserId
+                };
             }
 
-            return false;
+            return new UpdateTicketResponse()
+            {
+                Success = false,
+                Platform = input.Platform,
+                TicketCode = "",
+                UserId = input.UserId
+            };
         }
 
         private static bool IsValidTicket(Ticket ticket)
