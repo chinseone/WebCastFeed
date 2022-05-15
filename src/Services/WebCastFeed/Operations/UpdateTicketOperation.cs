@@ -16,8 +16,7 @@ namespace WebCastFeed.Operations
             = new Dictionary<TicketState, TicketState>
         {
             {TicketState.Initial, TicketState.Distributed},
-            {TicketState.Distributed, TicketState.Claimed},
-            {TicketState.Claimed, TicketState.Activated}
+            {TicketState.Distributed, TicketState.Activated}
         };
 
         public UpdateTicketOperation(IXiugouRepository xiugouRepository)
@@ -96,31 +95,24 @@ namespace WebCastFeed.Operations
                 return false;
             }
 
-            // distributed -> claimed -> activated
+            // distributed -> activated
             // valid states:
-            //     false   ->  false  -> false
-            //     true    ->  false  -> false
-            //     true    ->  true   -> false
-            //     true    ->  true   -> true
-            return (!ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
-                || (ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
-                || (ticket.IsDistributed && ticket.IsClaimed && !ticket.IsActivated)
-                || (ticket.IsDistributed && ticket.IsClaimed && ticket.IsActivated);
+            //     false   ->  false
+            //     true    ->  false
+            //     true    ->  true
+            return (!ticket.IsDistributed && !ticket.IsActivated)
+                || (ticket.IsDistributed && !ticket.IsActivated)
+                || (ticket.IsDistributed && ticket.IsActivated);
         }
 
         private static TicketState GetTicketCurrentState(Ticket ticket)
         {
-            if (ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
+            if (ticket.IsDistributed && !ticket.IsActivated)
             {
                 return TicketState.Distributed;
             }
 
-            if (ticket.IsDistributed && ticket.IsClaimed && !ticket.IsActivated)
-            {
-                return TicketState.Claimed;
-            }
-
-            if (ticket.IsDistributed && ticket.IsClaimed && ticket.IsActivated)
+            if (ticket.IsDistributed && ticket.IsActivated)
             {
                 return TicketState.Activated;
             }
