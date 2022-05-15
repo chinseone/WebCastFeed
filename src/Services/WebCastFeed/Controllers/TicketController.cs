@@ -75,7 +75,7 @@ namespace WebCastFeed.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTicketByCode(
+        public async Task<IActionResult> GetTicketByCode(
             [FromQuery]string code,
             [FromServices] GetTicketByCodeOperation operation,
             [FromHeader(Name = "X-Ticket-Get-Key")] string ticketGetKey,
@@ -87,7 +87,7 @@ namespace WebCastFeed.Controllers
                 return Unauthorized("Invalid TicketGetKey");
             }
 
-            var res = _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
+            var res = await _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
                 string, GetTicketByCodeResponse>(operation, code, cancellationToken);
             return Ok(res);
         }
