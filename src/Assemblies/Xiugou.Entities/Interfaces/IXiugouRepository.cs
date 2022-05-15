@@ -20,6 +20,8 @@ namespace Xiugou.Entities.Entities
 
         Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
 
+        Task<User> GetUserByPlatformAndUserId(Platform platform, string userId);
+
         // Session
         int Save(Session session);
 

@@ -137,5 +137,61 @@ namespace Xiugou.Entities.Implementations
 
             return null;
         }
+
+        public async Task CreateUser(Platform platform, string userId, string username)
+        {
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            await db.HashSetAsync($"{platform}:{userId}", new []
+            {
+                new HashEntry("userId", userId),
+                new HashEntry("platform", platform.ToString()),
+                new HashEntry("nickname", username),
+                new HashEntry("ticketId", 0),
+                new HashEntry("messageCount", 1),
+                new HashEntry("totalPay", 0),
+                new HashEntry("totalPayGuest", 0),
+                new HashEntry("joinTimestamp", DateTime.UtcNow.ToString()),
+                new HashEntry("lastTimestamp", DateTime.UtcNow.ToString()),
+            });
+        }
+
+        public async Task<User> GetUserByPlatformAndUserId(Platform platform, string userId)
+        {
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            // var profile = await db.StringGetAsync($"{platform}:{userId}");
+            var user = await db.HashGetAsync($"{platform}:{userId}", 
+                new RedisValue[]
+                {
+                    "userId",
+                    "platform",
+                    "nickname", 
+                    "ticketId",
+                    "messageCount",
+                    "totalPay",
+                    "totalPayGuest",
+                    "joinTimestamp",
+                    "lastTimestamp"
+                });
+
+            if (user != null)
+            {
+                return new User()
+                {
+                    UserId = user[0],
+                    Platform = (Platform)((int)user[1]),
+                    NickName = user[2],
+                    TicketId = (int)user[3],
+                    MessageCount = (int)user[4],
+                    TotalPay = (int)user[5],
+                    TotalPayGuest = (int)user[6],
+                    JoinTimestamp = DateTime.Parse(user[7]),
+                    LastTimestamp = DateTime.Parse(user[8]),
+                };
+            }
+
+            return null;
+        }
     }
 }

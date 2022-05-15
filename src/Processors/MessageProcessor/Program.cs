@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Runtime;
+using Amazon.SQS;
 
 namespace MessageProcessor
 {
@@ -18,7 +20,15 @@ namespace MessageProcessor
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    var sqsAccessKey = Environment.GetEnvironmentVariable("SqsAccessKey") ?? "";
+                    var sqsSecretKey = Environment.GetEnvironmentVariable("SqsSecretKey") ?? "";
+
                     services.AddHostedService<Worker>();
+                    services.AddSingleton<AmazonSQSClient>(_ =>
+                    {
+                        var credentials = new BasicAWSCredentials(sqsAccessKey, sqsSecretKey);
+                        return new AmazonSQSClient(credentials);
+                    });
                 });
     }
 }
