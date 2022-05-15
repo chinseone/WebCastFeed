@@ -16,7 +16,8 @@ namespace WebCastFeed.Operations
             = new Dictionary<TicketState, TicketState>
         {
             {TicketState.Initial, TicketState.Distributed},
-            {TicketState.Distributed, TicketState.Activated}
+            {TicketState.Distributed, TicketState.Activated},
+            {TicketState.Activated, TicketState.Activated},
         };
 
         public UpdateTicketOperation(IXiugouRepository xiugouRepository)
@@ -75,9 +76,9 @@ namespace WebCastFeed.Operations
             if (!targetTicket.IsActivated)
             {
                 user.TicketId = (int)targetTicket.Id;
-                _XiugouRepository.Save(user);
-                return true;
             }
+
+            _XiugouRepository.Save(user);
 
             if (user.TicketId.HasValue &&
                 user.TicketId == (int)targetTicket.Id)

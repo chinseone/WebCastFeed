@@ -41,18 +41,19 @@ namespace WebCastFeed.Controllers
 
         [HttpPost("state")]
         [Consumes("application/json")]
-        public IActionResult UpdateTicket(
+        public async Task<IActionResult> UpdateTicket(
             [FromBody] UpdateTicketRequest input,
             [FromServices] UpdateTicketOperation operation,
             [FromHeader(Name = "X-Ticket-Update-Key")] string ticketUpdateKey,
             CancellationToken cancellationToken)
         {
             var key = Environment.GetEnvironmentVariable("TicketUpdateKey") ?? _FakeApiKey;
-            if (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey))
+            var checkKey = bool.Parse(Environment.GetEnvironmentVariable("CheckTicketUpdateKey") ?? "false") ;
+            if (checkKey && (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey)))
             {
                 return Unauthorized("Invalid TicketUpdateKey");
             }
-            var res = _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
+            var res = await _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
                 UpdateTicketRequest, bool>(operation, input, cancellationToken);
             return Ok(res);
         }
