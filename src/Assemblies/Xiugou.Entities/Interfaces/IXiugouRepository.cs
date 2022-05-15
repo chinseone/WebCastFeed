@@ -28,8 +28,8 @@ namespace Xiugou.Entities.Entities
         Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId);
 
         // H5Profile
-        Task CreateH5Profile(H5Profile profile);
-
-        Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname);
+        // Task CreateH5Profile(H5Profile profile);
+        //
+        // Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname);
     }
 }

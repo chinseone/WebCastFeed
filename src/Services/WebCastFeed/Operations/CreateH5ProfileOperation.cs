@@ -52,7 +52,7 @@ namespace WebCastFeed.Operations
                 Title = input.Title
             };
 
-            await _XiugouRepository.CreateH5Profile(profile);
+            // await _XiugouRepository.CreateH5Profile(profile);
 
             return new CreateH5ProfileResponse()
             {
@@ -95,9 +95,9 @@ namespace WebCastFeed.Operations
 
         private async Task<bool> AlreadyExists(Platform platform, string nickname)
         {
-            var result = await _XiugouRepository.GetH5ProfileByPlatformAndNickname(platform, nickname);
+            // var result = await _XiugouRepository.GetH5ProfileByPlatformAndNickname(platform, nickname);
 
-            return result != null;
+            return true;
         }
     }
 }
