@@ -54,7 +54,7 @@ namespace WebCastFeed.Controllers
                 return Unauthorized("Invalid TicketUpdateKey");
             }
             var res = await _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
-                UpdateTicketRequest, bool>(operation, input, cancellationToken);
+                UpdateTicketRequest, UpdateTicketResponse>(operation, input, cancellationToken);
             return Ok(res);
         }
 
