@@ -73,7 +73,7 @@ namespace WebCastFeed.Operations
             }
 
             // ticket code comes in with danmu
-            if (!targetTicket.IsActivated)
+            if (fromState != TicketState.Activated)
             {
                 user.TicketId = (int)targetTicket.Id;
             }
