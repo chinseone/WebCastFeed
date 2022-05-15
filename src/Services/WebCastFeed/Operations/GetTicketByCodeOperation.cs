@@ -18,7 +18,7 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<GetTicketByCodeResponse> ExecuteAsync(string input, CancellationToken cancellationToken = default)
         {
-            if (SanitizeInput(input, out var code))
+            if (!SanitizeInput(input, out var code))
             {
                 return null;
             }

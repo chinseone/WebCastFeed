@@ -70,10 +70,9 @@ namespace Xiugou.Entities.Implementations
 
         public async Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform)
         {
-            var query = _XiugouDbContext.Users
+            return await _XiugouDbContext.Users
                 .Where(e => e.Platform.Equals(platform))
-                .Where(e => e.UserId.Equals(userId));
-            return await query.FirstAsync();
+                .SingleOrDefaultAsync(e => e.UserId.Equals(userId));
         }
 
         public int Save(Session session)

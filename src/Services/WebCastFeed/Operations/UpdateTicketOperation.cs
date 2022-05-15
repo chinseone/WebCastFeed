@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WebCastFeed.Enums;
 using WebCastFeed.Models.Requests;
 using Xiugou.Entities.Entities;
+using Xiugou.Entities.Enums;
 
 namespace WebCastFeed.Operations
 {
@@ -15,8 +16,8 @@ namespace WebCastFeed.Operations
             = new Dictionary<TicketState, TicketState>
         {
             {TicketState.Initial, TicketState.Distributed},
-            {TicketState.Distributed, TicketState.Claimed},
-            {TicketState.Claimed, TicketState.Activated}
+            {TicketState.Distributed, TicketState.Activated},
+            {TicketState.Activated, TicketState.Activated},
         };
 
         public UpdateTicketOperation(IXiugouRepository xiugouRepository)
@@ -44,14 +45,48 @@ namespace WebCastFeed.Operations
             };
             var toState = GetTicketCurrentState(toTicket);
 
-            if(_TicketStateTransferMap[fromState] != toState)
+            if (_TicketStateTransferMap[fromState] != toState)
             {
                 return false;
             }
 
             await _XiugouRepository.UpdateTicket(toTicket);
-            
-            return true;
+
+            var user = await _XiugouRepository.GetUserByUserIdAndPlatform(input.UserId, (Platform)input.Platform);
+            if (user == null)
+            {
+                // First create a user no matter what
+                var now = DateTime.UtcNow;
+                user = new User()
+                {
+                    UserId = input.UserId,
+                    Platform = (Platform)input.Platform,
+                    NickName = input.Nickname,
+                    MessageCount = 0,
+                    TotalPay = 0,
+                    TotalPayGuest = 0,
+                    JoinTimestamp = now,
+                    LastTimestamp = now,
+                    CreatedUtc = now,
+                    UpdatedUtc = now,
+                };
+            }
+
+            // ticket code comes in with danmu
+            if (fromState != TicketState.Activated)
+            {
+                user.TicketId = (int)targetTicket.Id;
+            }
+
+            _XiugouRepository.Save(user);
+
+            if (user.TicketId.HasValue &&
+                user.TicketId == (int)targetTicket.Id)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsValidTicket(Ticket ticket)
@@ -61,31 +96,24 @@ namespace WebCastFeed.Operations
                 return false;
             }
 
-            // distributed -> claimed -> activated
+            // distributed -> activated
             // valid states:
-            //     false   ->  false  -> false
-            //     true    ->  false  -> false
-            //     true    ->  true   -> false
-            //     true    ->  true   -> true
-            return (!ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
-                || (ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
-                || (ticket.IsDistributed && ticket.IsClaimed && !ticket.IsActivated)
-                || (ticket.IsDistributed && ticket.IsClaimed && ticket.IsActivated);
+            //     false   ->  false
+            //     true    ->  false
+            //     true    ->  true
+            return (!ticket.IsDistributed && !ticket.IsActivated)
+                || (ticket.IsDistributed && !ticket.IsActivated)
+                || (ticket.IsDistributed && ticket.IsActivated);
         }
 
         private static TicketState GetTicketCurrentState(Ticket ticket)
         {
-            if (ticket.IsDistributed && !ticket.IsClaimed && !ticket.IsActivated)
+            if (ticket.IsDistributed && !ticket.IsActivated)
             {
                 return TicketState.Distributed;
             }
 
-            if (ticket.IsDistributed && ticket.IsClaimed && !ticket.IsActivated)
-            {
-                return TicketState.Claimed;
-            }
-
-            if (ticket.IsDistributed && ticket.IsClaimed && ticket.IsActivated)
+            if (ticket.IsDistributed && ticket.IsActivated)
             {
                 return TicketState.Activated;
             }
