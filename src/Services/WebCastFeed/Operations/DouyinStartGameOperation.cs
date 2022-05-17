@@ -62,7 +62,7 @@ namespace WebCastFeed.Operations
                     UpdatedUtc = now
                 };
 
-                _XiugouRepository.Save(session);
+                // _XiugouRepository.Save(session);
 
                 return new DouyinStartGameResponse()
                 {

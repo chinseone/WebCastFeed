@@ -20,17 +20,18 @@ namespace WebCastFeed.Operations
         {
             var sanitizedAnchorId = HttpUtility.UrlEncode(anchorId); // in case of SQL injection
 
-            var session = await _XiugouRepository.GetMostRecentActiveSessionByAnchorId(sanitizedAnchorId);
-
-            if (session == null)
-            {
-                return null;
-            }
-
-            return new GetActiveSessionIdByAnchorIdResponse()
-            {
-                SessionId = session.SessionId
-            };
+            return null;
+            // var session = await _XiugouRepository.GetMostRecentActiveSessionByAnchorId(sanitizedAnchorId);
+            //
+            // if (session == null)
+            // {
+            //     return null;
+            // }
+            //
+            // return new GetActiveSessionIdByAnchorIdResponse()
+            // {
+            //     SessionId = session.SessionId
+            // };
         }
     }
 }

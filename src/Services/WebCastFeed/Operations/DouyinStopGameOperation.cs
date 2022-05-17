@@ -58,7 +58,7 @@ namespace WebCastFeed.Operations
                     UpdatedUtc = utcNow
                 };
 
-                await _XiugouRepository.UpdateSessionBySessionId(session);
+                // await _XiugouRepository.UpdateSessionBySessionId(session);
 
                 return new DouyinStopGameResponse()
                 {
