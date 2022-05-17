@@ -21,20 +21,20 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<List<GetTicketByCodeResponse>> ExecuteAsync(GetAllTicketsRequest input, CancellationToken cancellationToken = default)
         {
-            if (ValidateInputSignature(input))
-            {
-                var allTickets = await _XiugouRepository.GetAllTickets();
-
-                return allTickets.Select(t => new GetTicketByCodeResponse()
-                {
-                    Code = t.Code,
-                    Event = t.Event?.ToString(),
-                    IsActivated = t.IsActivated,
-                    IsClaimed = t.IsClaimed,
-                    IsDistributed = t.IsDistributed,
-                    TicketType = t.TicketType
-                }).OrderBy(tt => tt.TicketType).ToList();
-            }
+            // if (ValidateInputSignature(input))
+            // {
+            //     var allTickets = await _XiugouRepository.GetAllTickets();
+            //
+            //     return allTickets.Select(t => new GetTicketByCodeResponse()
+            //     {
+            //         Code = t.Code,
+            //         Event = t.Event?.ToString(),
+            //         IsActivated = t.IsActivated,
+            //         IsClaimed = t.IsClaimed,
+            //         IsDistributed = t.IsDistributed,
+            //         TicketType = t.TicketType
+            //     }).OrderBy(tt => tt.TicketType).ToList();
+            // }
 
             return new List<GetTicketByCodeResponse>();
         }

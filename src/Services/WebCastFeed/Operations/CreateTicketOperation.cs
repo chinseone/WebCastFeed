@@ -20,41 +20,41 @@ namespace WebCastFeed.Operations
 
         public async ValueTask<bool> ExecuteAsync(CreateTicketRequest input, CancellationToken cancellationToken = default)
         {
-            var ticketTypeParseResult = Enum.TryParse(input.TicketType, true, out TicketType ticketType);
-
-            if (!ticketTypeParseResult)
-            {
-                return false;
-            }
-
-            var code = GenerateTicketCode();
-            try
-            {
-                var tempTicket = await _XiugouRepository.GetTicketByCode(code);
-                while (tempTicket != null)
-                {
-                    code = GenerateTicketCode();
-                    tempTicket = await _XiugouRepository.GetTicketByCode(code);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
-            var ticket = new Ticket()
-            {
-                Code = code,
-                TicketType = ticketType,
-                Event = null,
-                Platform = null,
-                IsActivated = false,
-                IsClaimed = false,
-                IsDistributed = false
-            };
-
-            _XiugouRepository.Save(ticket);
+            // var ticketTypeParseResult = Enum.TryParse(input.TicketType, true, out TicketType ticketType);
+            //
+            // if (!ticketTypeParseResult)
+            // {
+            //     return false;
+            // }
+            //
+            // var code = GenerateTicketCode();
+            // try
+            // {
+            //     var tempTicket = await _XiugouRepository.GetTicketByCode(code);
+            //     while (tempTicket != null)
+            //     {
+            //         code = GenerateTicketCode();
+            //         tempTicket = await _XiugouRepository.GetTicketByCode(code);
+            //     }
+            // }
+            // catch (Exception e)
+            // {
+            //     Console.WriteLine(e);
+            //     throw;
+            // }
+            //
+            // var ticket = new Ticket()
+            // {
+            //     Code = code,
+            //     TicketType = ticketType,
+            //     Event = null,
+            //     Platform = null,
+            //     IsActivated = false,
+            //     IsClaimed = false,
+            //     IsDistributed = false
+            // };
+            //
+            // _XiugouRepository.Save(ticket);
 
             return true;
         }
