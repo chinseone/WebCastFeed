@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -119,19 +117,60 @@ namespace Xiugou.Entities.Implementations
             });
 
         }
-        //
-        // public int Save(User user)
-        // {
-        //     _XiugouDbContext.Users.Add(user);
-        //     return _XiugouDbContext.SaveChanges();
-        // }
-        //
-        // public async Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform)
-        // {
-        //     return await _XiugouDbContext.Users
-        //         .Where(e => e.Platform.Equals(platform))
-        //         .SingleOrDefaultAsync(e => e.UserId.Equals(userId));
-        // }
+        
+        public async Task Save(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            await db.HashSetAsync($"users:{user.Platform}:{user.UserId}", new[]
+            {
+                new HashEntry("userId", user.UserId),
+                new HashEntry("platform", user.Platform.ToString()),
+                new HashEntry("nickname", user.NickName),
+                new HashEntry("ticketCode", user.TicketCode),
+                new HashEntry("messageCount", user.MessageCount),
+                new HashEntry("totalPay", user.TotalPay),
+                new HashEntry("totalPayGuest", user.TotalPayGuest),
+                new HashEntry("joinedTime", user.JoinTimestamp.Ticks),
+                new HashEntry("lastActiveTime", user.LastTimestamp.Ticks)
+            });
+        }
+        
+        public async Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            var hEntries = await db.HashGetAllAsync($"users:{platform}:{userId}");
+            var userEntry = hEntries.ToStringDictionary();
+
+            if (userEntry.Count == 0)
+            {
+                return null;
+            }
+
+            return new User()
+            {
+                UserId = userId,
+                Platform = platform,
+                NickName = userEntry["nickname"],
+                TicketCode = userEntry["ticketCode"],
+                MessageCount = int.Parse(userEntry["messageCount"]),
+                TotalPay = int.Parse(userEntry["totalPay"]),
+                TotalPayGuest = int.Parse(userEntry["totalPayGuest"]),
+                JoinTimestamp = new DateTime(long.Parse(userEntry["joinedTime"])),
+                LastTimestamp = new DateTime(long.Parse(userEntry["lastActiveTime"]))
+            };
+        }
         //
         // public int Save(Session session)
         // {

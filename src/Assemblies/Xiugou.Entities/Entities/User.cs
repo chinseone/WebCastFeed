@@ -18,7 +18,7 @@ namespace Xiugou.Entities.Entities
         public string NickName { get; set; }
 
         // 对应的门票ID，可以为空
-        public int? TicketId { get; set; }
+        public string? TicketCode { get; set; }
 
         // 发送的弹幕总数
         public int MessageCount { get; set; }

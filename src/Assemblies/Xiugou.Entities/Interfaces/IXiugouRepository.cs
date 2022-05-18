@@ -14,11 +14,11 @@ namespace Xiugou.Entities.Entities
         // Task<List<Ticket>> GetAllTickets();
         
         Task UpdateTicket(Ticket ticket);
-        //
-        // // User
-        // int Save(User user);
-        //
-        // Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
+
+        // User
+        Task Save(User user);
+        
+        Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
         //
         // // Session
         // int Save(Session session);
