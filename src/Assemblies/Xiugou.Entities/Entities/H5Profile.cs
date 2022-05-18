@@ -7,18 +7,14 @@ namespace Xiugou.Entities.Entities
     public class H5Profile
     {
         [Required]
-        public string Id { get; set; } = $"h5profile:{Guid.NewGuid().ToString()}";
+        public string Id { get; set; }
 
         public int Role { get; set; }
 
         public string Items { get; set; }
 
-        public string Title { get; set; }
+        public int Status { get; set; }
 
-        public Platform Platform { get; set; }
-
-        public string Nickname { get; set; }
-
-        public long TicketId { get; set; }
+        public string OpenId { get; set; }
     }
 }

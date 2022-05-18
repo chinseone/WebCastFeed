@@ -10,7 +10,7 @@ using Xiugou.Entities.Enums;
 
 namespace WebCastFeed.Operations
 {
-    public class GetH5ProfileOperation : IAsyncOperation<GetH5ProfileRequest, GetH5ProfileResponse>
+    public class GetH5ProfileOperation : IAsyncOperation<string, GetH5ProfileResponse>
     {
         private readonly IXiugouRepository _XiugouRepository;
 
@@ -19,28 +19,23 @@ namespace WebCastFeed.Operations
             _XiugouRepository = xiugouRepository ?? throw new ArgumentNullException(nameof(xiugouRepository));
         }
 
-        public async ValueTask<GetH5ProfileResponse> ExecuteAsync(GetH5ProfileRequest input, CancellationToken cancellationToken = default)
+        public async ValueTask<GetH5ProfileResponse> ExecuteAsync(string openId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var plat = (Platform)input.Platform;
-                var nickname = HttpUtility.UrlEncode(Encoding.UTF8.GetBytes(input.Nickname));
-                // var result = null; // await _XiugouRepository.GetH5ProfileByPlatformAndNickname(plat, nickname);
-                // if (result == null)
-                // {
-                //     
-                // }
-                return null;
+                var profile = await _XiugouRepository.GetH5ProfileByOpenId(openId);
+                if (profile == null)
+                {
+                    return null;
+                }
 
-                // return new GetH5ProfileResponse()
-                // {
-                //     Items = result.Items,
-                //     Nickname = HttpUtility.UrlDecode(nickname),
-                //     Platform = result.Platform,
-                //     Role = result.Role,
-                //     TicketId = result.TicketId,
-                //     Title = result.Title
-                // };
+                return new GetH5ProfileResponse()
+                {
+                    Identification = profile.Id,
+                    Role = profile.Role,
+                    Items = profile.Items,
+                    Status = profile.Status
+                };
             }
             catch (Exception e)
             {

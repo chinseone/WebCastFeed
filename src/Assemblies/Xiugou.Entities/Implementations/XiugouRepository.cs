@@ -237,14 +237,14 @@ namespace Xiugou.Entities.Implementations
         
             var serialProfile = JsonSerializer.Serialize(profile);
         
-           await db.StringSetAsync($"{profile.Platform}:{profile.Nickname}", serialProfile);
+           await db.StringSetAsync($"h5:{profile.OpenId}", serialProfile);
         }
         
-        public async Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname)
+        public async Task<H5Profile> GetH5ProfileByOpenId(string openId)
         {
             var db = _ConnectionMultiplexer.GetDatabase();
         
-            var profile = await db.StringGetAsync($"{platform}:{nickname}");
+            var profile = await db.StringGetAsync($"h5:{openId}");
         
             if (!string.IsNullOrEmpty(profile))
             {
