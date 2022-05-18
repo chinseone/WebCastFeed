@@ -40,8 +40,6 @@ namespace Xiugou.Entities.Implementations
 
             // H5Profile
             modelBuilder.Entity<H5Profile>().HasKey(s => s.Id);
-            modelBuilder.Entity<H5Profile>().Property(e => e.Platform)
-                .HasConversion(new EnumToNumberConverter<Platform, int>());
 
             base.OnModelCreating(modelBuilder);
         }
