@@ -36,7 +36,8 @@ namespace WebCastFeed.Operations
                     Success = false,
                     Platform = input.Platform,
                     TicketCode = "",
-                    UserId = input.UserId
+                    UserId = input.UserId,
+                    Nickname = input.Nickname
                 };
             }
             
@@ -61,7 +62,8 @@ namespace WebCastFeed.Operations
                     Success = false,
                     Platform = input.Platform,
                     TicketCode = "",
-                    UserId = input.UserId
+                    UserId = input.UserId,
+                    Nickname = input.Nickname
                 };
             }
             
@@ -104,7 +106,8 @@ namespace WebCastFeed.Operations
                     Success = true,
                     Platform = input.Platform,
                     TicketCode = targetTicket.Code,
-                    UserId = input.UserId
+                    UserId = input.UserId,
+                    Nickname = input.Nickname
                 };
             }
 
@@ -113,7 +116,8 @@ namespace WebCastFeed.Operations
                 Success = false,
                 Platform = input.Platform,
                 TicketCode = "",
-                UserId = input.UserId
+                UserId = input.UserId,
+                Nickname = input.Nickname
             };
         }
 

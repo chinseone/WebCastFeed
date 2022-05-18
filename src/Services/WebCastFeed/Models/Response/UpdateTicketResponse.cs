@@ -10,6 +10,9 @@ namespace WebCastFeed.Models.Response
         [JsonPropertyName("userId")]
         public string UserId { get; set; }
 
+        [JsonPropertyName("nickname")]
+        public string Nickname { get; set; }
+
         [JsonPropertyName("platform")]
         public int Platform { get; set; }
 
