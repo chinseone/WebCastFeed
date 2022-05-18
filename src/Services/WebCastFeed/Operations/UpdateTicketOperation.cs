@@ -12,7 +12,7 @@ namespace WebCastFeed.Operations
 {
     public class UpdateTicketOperation : IAsyncOperation<UpdateTicketRequest, UpdateTicketResponse>
     {
-        // private readonly IXiugouRepository _XiugouRepository;
+        private readonly IXiugouRepository _XiugouRepository;
         private readonly Dictionary<TicketState, TicketState> _TicketStateTransferMap 
             = new Dictionary<TicketState, TicketState>
         {
@@ -21,32 +21,39 @@ namespace WebCastFeed.Operations
             {TicketState.Activated, TicketState.Activated},
         };
 
+        public UpdateTicketOperation(IXiugouRepository xiugouRepository)
+        {
+            _XiugouRepository = xiugouRepository ?? throw new ArgumentNullException(nameof(xiugouRepository));
+        }
+
         public async ValueTask<UpdateTicketResponse> ExecuteAsync(UpdateTicketRequest input, CancellationToken cancellationToken = default)
         {
-            // var targetTicket = await _XiugouRepository.GetTicketByCode(input.TicketCode);
-            // if (!IsValidTicket(targetTicket))
-            // {
-            //     return new UpdateTicketResponse()
-            //     {
-            //         Success = false,
-            //         Platform = input.Platform,
-            //         TicketCode = "",
-            //         UserId = input.UserId
-            //     };
-            // }
-            //
-            // var fromState = GetTicketCurrentState(targetTicket);
-            // var toTicket = new Ticket()
-            // {
-            //     Id = targetTicket.Id,
-            //     Code = targetTicket.Code,
-            //     IsDistributed = targetTicket.IsDistributed || input.IsDistributed,
-            //     IsClaimed = targetTicket.IsClaimed || input.IsClaimed,
-            //     IsActivated = targetTicket.IsActivated || input.IsActivated,
-            //     CreatedUtc = targetTicket.CreatedUtc
-            // };
-            // var toState = GetTicketCurrentState(toTicket);
-            //
+            var targetTicket = await _XiugouRepository.GetTicketByCode(input.TicketCode);
+            if (!IsValidTicket(targetTicket))
+            {
+                return new UpdateTicketResponse()
+                {
+                    Success = false,
+                    Platform = input.Platform,
+                    TicketCode = "",
+                    UserId = input.UserId
+                };
+            }
+            
+            var fromState = GetTicketCurrentState(targetTicket);
+            var toTicket = new Ticket()
+            {
+                Id = targetTicket.Id,
+                Code = targetTicket.Code,
+                Platform = (Platform)input.Platform,
+                Event = (Event)input.Event,
+                IsDistributed = targetTicket.IsDistributed || input.IsDistributed,
+                IsClaimed = targetTicket.IsClaimed || input.IsClaimed,
+                IsActivated = targetTicket.IsActivated || input.IsActivated,
+                CreatedUtc = targetTicket.CreatedUtc
+            };
+            var toState = GetTicketCurrentState(toTicket);
+            
             // if (_TicketStateTransferMap[fromState] != toState)
             // {
             //     return new UpdateTicketResponse()
@@ -57,9 +64,9 @@ namespace WebCastFeed.Operations
             //         UserId = input.UserId
             //     };
             // }
-            //
-            // await _XiugouRepository.UpdateTicket(toTicket);
-            //
+            
+            await _XiugouRepository.UpdateTicket(toTicket);
+            
             // var user = await _XiugouRepository.GetUserByUserIdAndPlatform(input.UserId, (Platform)input.Platform);
             // if (user == null)
             // {
@@ -85,7 +92,7 @@ namespace WebCastFeed.Operations
             // {
             //     user.TicketId = (int)targetTicket.Id;
             // }
-            //
+            
             // _XiugouRepository.Save(user);
             //
             // if (user.TicketId.HasValue &&

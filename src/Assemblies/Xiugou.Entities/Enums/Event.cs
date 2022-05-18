@@ -2,6 +2,7 @@
 {
     public enum Event
     {
+        Default = 0,
         BlueDash = 1
     }
 }

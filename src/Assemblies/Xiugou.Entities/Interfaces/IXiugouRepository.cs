@@ -7,13 +7,13 @@ namespace Xiugou.Entities.Entities
     public interface IXiugouRepository
     {
         // // Ticket
-        // int Save(Ticket ticket);
-        //
-        // Task<Ticket> GetTicketByCode(string code);
-        //
+        Task Save(Ticket ticket);
+
+        Task<Ticket> GetTicketByCode(string code);
+        
         // Task<List<Ticket>> GetAllTickets();
-        //
-        // Task UpdateTicket(Ticket ticket);
+        
+        Task UpdateTicket(Ticket ticket);
         //
         // // User
         // int Save(User user);
