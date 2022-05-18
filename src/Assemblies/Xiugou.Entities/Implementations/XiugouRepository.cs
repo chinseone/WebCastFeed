@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -84,12 +86,30 @@ namespace Xiugou.Entities.Implementations
             });
         }
         
-        // public async Task<List<Ticket>> GetAllTickets()
-        // {
-        //     var db = _ConnectionMultiplexer.GetDatabase();
-        //     var keys = await db.HashKeysAsync("tickets*");
-        // }
-        //
+        public async Task<List<Ticket>> GetAllTickets()
+        {
+            var result = new List<Ticket>();
+            var db = _ConnectionMultiplexer.GetDatabase();
+            int nextCursor = 0;
+            do
+            {
+                var redisResult = await db.ExecuteAsync("SCAN", new object[] { nextCursor.ToString(), "MATCH", "tickets*", "COUNT", "1000" });
+                var innerResult = (RedisResult[])redisResult;
+
+                nextCursor = int.Parse((string)innerResult[0]);
+                List<RedisKey> resultLines = ((RedisKey[])innerResult[1]).ToList();
+                foreach (var key in resultLines)
+                {
+                    var ticketCode = ((string)key).Split(":")[1];
+                    var ticket = await GetTicketByCode(ticketCode);
+                    result.Add(ticket);
+                }
+            }
+            while (nextCursor != 0);
+
+            return result;
+        }
+        
 
         public async Task UpdateTicket(Ticket ticket)
         {
