@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace WebCastFeed.Operations
                 };
             }
 
-            if(await AlreadyExists(input.Platform, input.Nickname))
+            if(await AlreadyExists(input.OpenId))
             {
                 return new CreateH5ProfileResponse()
                 {
@@ -44,12 +45,11 @@ namespace WebCastFeed.Operations
 
             var profile = new H5Profile()
             {
+                Id = input.Identification,
                 Role = input.Role,
-                Items = input.Items,
-                Nickname = HttpUtility.UrlEncode(Encoding.UTF8.GetBytes(input.Nickname)),
-                Platform = input.Platform,
-                TicketId = input.TicketId,
-                Title = input.Title
+                Items = string.Join(",", input.Items),
+                Status = input.Status,
+                OpenId = input.OpenId
             };
 
             await _XiugouRepository.CreateH5Profile(profile);
@@ -70,32 +70,14 @@ namespace WebCastFeed.Operations
                 return false;
             }
 
-            foreach (var item in items)
-            {
-                if (!Enum.TryParse(typeof(H5Item), item, true, out var itemRes))
-                {
-                    field = "items";
-                    return false;
-                }
-            }
-
             // Title
-
-
-            // Platform
-            if (!Enum.TryParse(typeof(Platform), input.Platform.ToString(), true, out var platRes))
-            {
-                field = "platform";
-                return false;
-            }
-
             field = string.Empty;
             return true;
         }
 
-        private async Task<bool> AlreadyExists(Platform platform, string nickname)
+        private async Task<bool> AlreadyExists(string openId)
         {
-            var result = await _XiugouRepository.GetH5ProfileByPlatformAndNickname(platform, nickname);
+            var result = await _XiugouRepository.GetH5ProfileByOpenId(openId);
 
             return result != null;
         }

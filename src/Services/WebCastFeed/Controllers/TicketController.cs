@@ -29,11 +29,11 @@ namespace WebCastFeed.Controllers
             [FromHeader(Name="X-Ticket-Creation-Key")]string ticketCreationKey,
             CancellationToken cancellationToken)
         {
-            var key = Environment.GetEnvironmentVariable("TicketCreationKey") ?? _FakeApiKey;
-            if (string.IsNullOrEmpty(ticketCreationKey) || ticketCreationKey.Equals(_FakeApiKey) || !key.Equals(ticketCreationKey))
-            {
-                return BadRequest("Invalid TicketCreationKey");
-            }
+            // var key = Environment.GetEnvironmentVariable("TicketCreationKey") ?? _FakeApiKey;
+            // if (string.IsNullOrEmpty(ticketCreationKey) || ticketCreationKey.Equals(_FakeApiKey) || !key.Equals(ticketCreationKey))
+            // {
+            //     return BadRequest("Invalid TicketCreationKey");
+            // }
             var res = _OperationExecutor.ExecuteAsync<CreateTicketOperation,
                 CreateTicketRequest, bool>(operation, input, cancellationToken);
             return Ok(res);
@@ -41,19 +41,20 @@ namespace WebCastFeed.Controllers
 
         [HttpPost("state")]
         [Consumes("application/json")]
-        public IActionResult UpdateTicket(
+        public async Task<IActionResult> UpdateTicket(
             [FromBody] UpdateTicketRequest input,
             [FromServices] UpdateTicketOperation operation,
             [FromHeader(Name = "X-Ticket-Update-Key")] string ticketUpdateKey,
             CancellationToken cancellationToken)
         {
             var key = Environment.GetEnvironmentVariable("TicketUpdateKey") ?? _FakeApiKey;
-            if (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey))
+            var checkKey = bool.Parse(Environment.GetEnvironmentVariable("CheckTicketUpdateKey") ?? "false") ;
+            if (checkKey && (string.IsNullOrEmpty(ticketUpdateKey) || ticketUpdateKey.Equals(_FakeApiKey) || !key.Equals(ticketUpdateKey)))
             {
                 return Unauthorized("Invalid TicketUpdateKey");
             }
-            var res = _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
-                UpdateTicketRequest, bool>(operation, input, cancellationToken);
+            var res = await _OperationExecutor.ExecuteAsync<UpdateTicketOperation,
+                UpdateTicketRequest, UpdateTicketResponse>(operation, input, cancellationToken);
             return Ok(res);
         }
 
@@ -75,7 +76,7 @@ namespace WebCastFeed.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTicketByCode(
+        public async Task<IActionResult> GetTicketByCode(
             [FromQuery]string code,
             [FromServices] GetTicketByCodeOperation operation,
             [FromHeader(Name = "X-Ticket-Get-Key")] string ticketGetKey,
@@ -87,7 +88,7 @@ namespace WebCastFeed.Controllers
                 return Unauthorized("Invalid TicketGetKey");
             }
 
-            var res = _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
+            var res = await _OperationExecutor.ExecuteAsync<GetTicketByCodeOperation,
                 string, GetTicketByCodeResponse>(operation, code, cancellationToken);
             return Ok(res);
         }

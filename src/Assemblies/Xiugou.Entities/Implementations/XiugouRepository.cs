@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using System.Web;
 using StackExchange.Redis;
 using Xiugou.Entities.Entities;
 using Xiugou.Entities.Enums;
@@ -12,103 +12,219 @@ namespace Xiugou.Entities.Implementations
 {
     public class XiugouRepository : IXiugouRepository
     {
-        private readonly XiugouDbContext _XiugouDbContext;
         private readonly IConnectionMultiplexer _ConnectionMultiplexer;
 
-        public XiugouRepository(XiugouDbContext xiugouDbContext, IConnectionMultiplexer connectionMultiplexer)
+        public XiugouRepository(IConnectionMultiplexer connectionMultiplexer)
         {
-            _XiugouDbContext = xiugouDbContext ?? throw new ArgumentNullException(nameof(xiugouDbContext));
             _ConnectionMultiplexer = connectionMultiplexer ?? throw new ArgumentNullException(nameof(connectionMultiplexer));
         }
 
         public async Task<Ticket> GetTicketByCode(string code)
         {
-            return await _XiugouDbContext.Tickets
-                .SingleOrDefaultAsync(t => t.Code.Equals(code))
-                .ConfigureAwait(false);
-        }
+            if (string.IsNullOrEmpty(code) || code.Length != 6)
+            {
+                throw new ArgumentNullException(nameof(code));
+            }
 
-        public int Save(Ticket ticket)
+            var encodeCode = HttpUtility.UrlEncode(code);
+
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            var hEntries = await db.HashGetAllAsync($"tickets:{encodeCode}");
+            var ticketEntry = hEntries.ToStringDictionary();
+
+            if (ticketEntry.Count == 0)
+            {
+                return null;
+            }
+
+            var platform = string.IsNullOrEmpty(ticketEntry["platform"]) ? Platform.Default
+                : (Platform)Enum.Parse(typeof(Platform), ticketEntry["platform"]);
+
+            var eventType = string.IsNullOrEmpty(ticketEntry["event"]) ? Event.Default
+                : (Event) Enum.Parse(typeof(Event), ticketEntry["event"]);
+
+            var ticketType = string.IsNullOrEmpty(ticketEntry["type"]) ? TicketType.Default
+                : (TicketType)Enum.Parse(typeof(TicketType), ticketEntry["type"]);
+
+            var isDistributed = int.Parse(ticketEntry["isDistributed"]) != 0;
+            var isClaimed = int.Parse(ticketEntry["isClaimed"]) != 0;
+            var isActivated = int.Parse(ticketEntry["isActivated"]) != 0;
+
+            var keys = db.HashScan("ticket*");
+
+            return new Ticket()
+            {
+                Code = ticketEntry["code"],
+                Platform = platform,
+                Event = eventType,
+                TicketType = ticketType,
+                IsDistributed = isDistributed,
+                IsClaimed = isClaimed,
+                IsActivated = isActivated
+            };
+        }
+        
+        public async Task Save(Ticket ticket)
         {
-            _XiugouDbContext.Tickets.Add(ticket);
-            return _XiugouDbContext.SaveChanges();
-        }
+            if (ticket == null)
+            {
+                throw new ArgumentNullException(nameof(ticket));
+            }
 
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            await db.HashSetAsync($"tickets:{ticket.Code}", new []
+            {
+                new HashEntry("code", ticket.Code),
+                new HashEntry("platform", ticket.Platform.HasValue ? ticket.Platform.ToString() : string.Empty),
+                new HashEntry("event", ticket.Event.HasValue ? ticket.Event.ToString() : string.Empty),
+                new HashEntry("type", (int)ticket.TicketType),
+                new HashEntry("isDistributed", ticket.IsDistributed),
+                new HashEntry("isClaimed", ticket.IsClaimed),
+                new HashEntry("isActivated", ticket.IsActivated)
+            });
+        }
+        
         public async Task<List<Ticket>> GetAllTickets()
         {
-            return await _XiugouDbContext.Tickets.ToListAsync();
+            var result = new List<Ticket>();
+            var db = _ConnectionMultiplexer.GetDatabase();
+            int nextCursor = 0;
+            do
+            {
+                var redisResult = await db.ExecuteAsync("SCAN", new object[] { nextCursor.ToString(), "MATCH", "tickets*", "COUNT", "1000" });
+                var innerResult = (RedisResult[])redisResult;
+
+                nextCursor = int.Parse((string)innerResult[0]);
+                List<RedisKey> resultLines = ((RedisKey[])innerResult[1]).ToList();
+                foreach (var key in resultLines)
+                {
+                    var ticketCode = ((string)key).Split(":")[1];
+                    var ticket = await GetTicketByCode(ticketCode);
+                    result.Add(ticket);
+                }
+            }
+            while (nextCursor != 0);
+
+            return result;
         }
+        
 
         public async Task UpdateTicket(Ticket ticket)
         {
-            await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();
-            try
-            {
-                var entity = await _XiugouDbContext.Tickets
-                    .SingleOrDefaultAsync(e => e.Id == ticket.Id)
-                    .ConfigureAwait(false);
-                entity.Event = ticket.Event;
-                entity.Platform = ticket.Platform;
-                entity.IsDistributed = ticket.IsDistributed;
-                entity.IsClaimed = ticket.IsClaimed;
-                entity.IsActivated = ticket.IsActivated;
-                await _XiugouDbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch (Exception e)
-            {
-                await transaction.RollbackAsync();
-                throw new Exception($"Exception when update ticket status. Exception: {e}");
-            }
-        }
+            var db = _ConnectionMultiplexer.GetDatabase();
 
-        public int Save(User user)
+            var encodeCode = HttpUtility.UrlEncode(ticket.Code);
+            var hashKey = $"tickets:{encodeCode}";
+            var hEntries = await db.HashGetAllAsync(hashKey);
+            var ticketEntry = hEntries.ToStringDictionary();
+
+            if (ticketEntry.Count == 0)
+            {
+                return;
+            }
+
+            await db.HashSetAsync(hashKey, new[]
+            {
+                new HashEntry("code", ticket.Code),
+                new HashEntry("platform", ticket.Platform.HasValue ? ticket.Platform.ToString() : string.Empty),
+                new HashEntry("event", ticket.Event.HasValue ? ticket.Event.ToString() : string.Empty),
+                new HashEntry("type", ticketEntry["type"]),
+                new HashEntry("isDistributed", ticket.IsDistributed),
+                new HashEntry("isClaimed", ticket.IsClaimed),
+                new HashEntry("isActivated", ticket.IsActivated)
+            });
+
+        }
+        
+        public async Task Save(User user)
         {
-            _XiugouDbContext.Users.Add(user);
-            return _XiugouDbContext.SaveChanges();
-        }
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
 
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            await db.HashSetAsync($"users:{user.Platform}:{user.UserId}", new[]
+            {
+                new HashEntry("userId", user.UserId),
+                new HashEntry("platform", user.Platform.ToString()),
+                new HashEntry("nickname", user.NickName),
+                new HashEntry("ticketCode", user.TicketCode),
+                new HashEntry("messageCount", user.MessageCount),
+                new HashEntry("totalPay", user.TotalPay),
+                new HashEntry("totalPayGuest", user.TotalPayGuest),
+                new HashEntry("joinedTime", user.JoinTimestamp.Ticks),
+                new HashEntry("lastActiveTime", user.LastTimestamp.Ticks)
+            });
+        }
+        
         public async Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform)
         {
-            var query = _XiugouDbContext.Users
-                .Where(e => e.Platform.Equals(platform))
-                .Where(e => e.UserId.Equals(userId));
-            return await query.FirstAsync();
-        }
-
-        public int Save(Session session)
-        {
-            _XiugouDbContext.Sessions.Add(session);
-            return _XiugouDbContext.SaveChanges();
-        }
-
-        public async Task UpdateSessionBySessionId(Session session)
-        {
-            await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();
-            try
+            if (string.IsNullOrEmpty(userId))
             {
-                var entity = await _XiugouDbContext.Sessions
-                    .SingleOrDefaultAsync(e => e.SessionId == session.SessionId)
-                    .ConfigureAwait(false);
-                entity.IsActive = session.IsActive;
-                await _XiugouDbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
+                throw new ArgumentNullException(nameof(userId));
             }
-            catch (Exception e)
-            {
-                await transaction.RollbackAsync();
-                throw new Exception($"Exception when update session status. Exception: {e}");
-            }
-        }
 
-        public async Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId)
-        {
-            return await _XiugouDbContext.Sessions
-                .Where(s => s.AnchorId.Equals(anchorId))
-                .Where(s => s.IsActive)
-                .OrderByDescending(entity => EF.Property<DateTime>(entity, "CreatedUtc"))
-                .FirstAsync().ConfigureAwait(false);
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            var hEntries = await db.HashGetAllAsync($"users:{platform}:{userId}");
+            var userEntry = hEntries.ToStringDictionary();
+
+            if (userEntry.Count == 0)
+            {
+                return null;
+            }
+
+            return new User()
+            {
+                UserId = userId,
+                Platform = platform,
+                NickName = userEntry["nickname"],
+                TicketCode = userEntry["ticketCode"],
+                MessageCount = int.Parse(userEntry["messageCount"]),
+                TotalPay = int.Parse(userEntry["totalPay"]),
+                TotalPayGuest = int.Parse(userEntry["totalPayGuest"]),
+                JoinTimestamp = new DateTime(long.Parse(userEntry["joinedTime"])),
+                LastTimestamp = new DateTime(long.Parse(userEntry["lastActiveTime"]))
+            };
         }
+        //
+        // public int Save(Session session)
+        // {
+        //     _XiugouDbContext.Sessions.Add(session);
+        //     return _XiugouDbContext.SaveChanges();
+        // }
+        //
+        // public async Task UpdateSessionBySessionId(Session session)
+        // {
+        //     await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();
+        //     try
+        //     {
+        //         var entity = await _XiugouDbContext.Sessions
+        //             .SingleOrDefaultAsync(e => e.SessionId == session.SessionId)
+        //             .ConfigureAwait(false);
+        //         entity.IsActive = session.IsActive;
+        //         await _XiugouDbContext.SaveChangesAsync();
+        //         await transaction.CommitAsync();
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         await transaction.RollbackAsync();
+        //         throw new Exception($"Exception when update session status. Exception: {e}");
+        //     }
+        // }
+        //
+        // public async Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId)
+        // {
+        //     return await _XiugouDbContext.Sessions
+        //         .Where(s => s.AnchorId.Equals(anchorId))
+        //         .Where(s => s.IsActive)
+        //         .OrderByDescending(entity => EF.Property<DateTime>(entity, "CreatedUtc"))
+        //         .FirstAsync().ConfigureAwait(false);
+        // }
 
         public async Task CreateH5Profile(H5Profile profile)
         {
@@ -116,25 +232,25 @@ namespace Xiugou.Entities.Implementations
             {
                 throw new ArgumentNullException(nameof(profile));
             }
-
+        
             var db = _ConnectionMultiplexer.GetDatabase();
-
+        
             var serialProfile = JsonSerializer.Serialize(profile);
-
-            db.StringSet($"{profile.Platform}:{profile.Nickname}", serialProfile);
+        
+           await db.StringSetAsync($"h5:{profile.OpenId}", serialProfile);
         }
-
-        public async Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname)
+        
+        public async Task<H5Profile> GetH5ProfileByOpenId(string openId)
         {
             var db = _ConnectionMultiplexer.GetDatabase();
-
-            var profile = await db.StringGetAsync($"{platform}:{nickname}");
-
+        
+            var profile = await db.StringGetAsync($"h5:{openId}");
+        
             if (!string.IsNullOrEmpty(profile))
             {
                 return JsonSerializer.Deserialize<H5Profile>(profile);
             }
-
+        
             return null;
         }
 

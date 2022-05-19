@@ -16,6 +16,9 @@ namespace WebCastFeed.Models.Requests
         [JsonPropertyName("userId")]
         public string UserId { get; set; }
 
+        [JsonPropertyName("nickname")]
+        public string Nickname { get; set; }
+
         [JsonPropertyName("isDistributed")]
         public bool IsDistributed { get; set; }
 

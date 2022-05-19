@@ -21,12 +21,12 @@ namespace WebCastFeed.Operations
         public async ValueTask<bool> ExecuteAsync(CreateTicketRequest input, CancellationToken cancellationToken = default)
         {
             var ticketTypeParseResult = Enum.TryParse(input.TicketType, true, out TicketType ticketType);
-
+            
             if (!ticketTypeParseResult)
             {
                 return false;
             }
-
+            
             var code = GenerateTicketCode();
             try
             {
@@ -53,8 +53,8 @@ namespace WebCastFeed.Operations
                 IsClaimed = false,
                 IsDistributed = false
             };
-
-            _XiugouRepository.Save(ticket);
+            
+            await _XiugouRepository.Save(ticket);
 
             return true;
         }

@@ -6,32 +6,30 @@ namespace Xiugou.Entities.Entities
 {
     public interface IXiugouRepository
     {
-        // Ticket
-        int Save(Ticket ticket);
+        // // Ticket
+        Task Save(Ticket ticket);
 
         Task<Ticket> GetTicketByCode(string code);
-
+        
         Task<List<Ticket>> GetAllTickets();
-
+        
         Task UpdateTicket(Ticket ticket);
 
         // User
-        int Save(User user);
-
+        Task Save(User user);
+        
         Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
-
-        Task<User> GetUserByPlatformAndUserId(Platform platform, string userId);
-
-        // Session
-        int Save(Session session);
-
-        Task UpdateSessionBySessionId(Session session);
-
-        Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId);
+        //
+        // // Session
+        // int Save(Session session);
+        //
+        // Task UpdateSessionBySessionId(Session session);
+        //
+        // Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId);
 
         // H5Profile
         Task CreateH5Profile(H5Profile profile);
-
-        Task<H5Profile> GetH5ProfileByPlatformAndNickname(Platform platform, string nickname);
+        
+        Task<H5Profile> GetH5ProfileByOpenId(string openId);
     }
 }

@@ -31,11 +31,11 @@ namespace WebCastFeed
         {
             services.AddControllers();
 
-            var sqlConnectionString = Environment.GetEnvironmentVariable("XiugouMySqlConnectionString");
-            services.AddDbContextPool<XiugouDbContext>(options =>
-            {
-                options.UseMySQL(sqlConnectionString);
-            }, int.Parse(Environment.GetEnvironmentVariable("ConnectionPoolSize") ?? "10"));
+            // var sqlConnectionString = Environment.GetEnvironmentVariable("XiugouMySqlConnectionString");
+            // services.AddDbContextPool<XiugouDbContext>(options =>
+            // {
+            //     options.UseMySQL(sqlConnectionString);
+            // }, int.Parse(Environment.GetEnvironmentVariable("ConnectionPoolSize") ?? "10"));
 
             var douyinBaseUrl = Environment.GetEnvironmentVariable("DouyinBaseUrl");
             services.AddScoped<IDouyinClient>(p => new DouyinClient(douyinBaseUrl));
