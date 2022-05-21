@@ -8,7 +8,7 @@ namespace WebCastFeed.Models.Response
         [JsonPropertyName("code")]
         public string Code { get; set; }
 
-        [JsonPropertyName("event")]
+        [JsonPropertyName("eventType")]
         public string Event { get; set; }
 
         [JsonPropertyName("ticketType")]
