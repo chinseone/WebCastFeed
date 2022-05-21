@@ -10,7 +10,7 @@ namespace WebCastFeed.Models.Requests
         [JsonPropertyName("platform")]
         public int Platform { get; set; }
 
-        [JsonPropertyName("event")]
+        [JsonPropertyName("eventType")]
         public int Event { get; set; }
 
         [JsonPropertyName("userId")]
