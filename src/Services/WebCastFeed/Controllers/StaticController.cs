@@ -11,7 +11,7 @@ namespace WebCastFeed.Controllers
     public class StaticController : Controller
     {
         [HttpGet("MP_verify_YQh0slpbIgOFVaGv.txt")]
-        public IActionResult H5Static()
+        public string H5Static()
         {
           return "YQh0slpbIgOFVaGv";
         }
