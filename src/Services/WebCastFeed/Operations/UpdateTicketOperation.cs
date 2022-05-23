@@ -16,7 +16,7 @@ namespace WebCastFeed.Operations
         private readonly Dictionary<TicketState, TicketState> _TicketStateTransferMap 
             = new Dictionary<TicketState, TicketState>
         {
-            {TicketState.Initial, TicketState.Distributed},
+            {TicketState.Initial, TicketState.Activated},
             {TicketState.Distributed, TicketState.Activated},
             {TicketState.Activated, TicketState.Activated},
         };
@@ -145,7 +145,7 @@ namespace WebCastFeed.Operations
                 return TicketState.Distributed;
             }
 
-            if (ticket.IsDistributed && ticket.IsActivated)
+            if (ticket.IsActivated)
             {
                 return TicketState.Activated;
             }
