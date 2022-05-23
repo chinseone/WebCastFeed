@@ -19,13 +19,6 @@ namespace Xiugou.Entities.Entities
         Task Save(User user);
         
         Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform);
-        //
-        // // Session
-        // int Save(Session session);
-        //
-        // Task UpdateSessionBySessionId(Session session);
-        //
-        // Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId);
 
         // H5Profile
         Task CreateH5Profile(H5Profile profile);

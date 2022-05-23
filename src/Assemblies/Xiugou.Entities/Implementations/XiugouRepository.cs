@@ -19,6 +19,7 @@ namespace Xiugou.Entities.Implementations
             _ConnectionMultiplexer = connectionMultiplexer ?? throw new ArgumentNullException(nameof(connectionMultiplexer));
         }
 
+# region Ticket
         public async Task<Ticket> GetTicketByCode(string code)
         {
             if (string.IsNullOrEmpty(code) || code.Length != 6)
@@ -50,8 +51,6 @@ namespace Xiugou.Entities.Implementations
             var isDistributed = int.Parse(ticketEntry["isDistributed"]) != 0;
             var isClaimed = int.Parse(ticketEntry["isClaimed"]) != 0;
             var isActivated = int.Parse(ticketEntry["isActivated"]) != 0;
-
-            var keys = db.HashScan("ticket*");
 
             return new Ticket()
             {
@@ -137,7 +136,9 @@ namespace Xiugou.Entities.Implementations
             });
 
         }
-        
+        #endregion
+
+#region User
         public async Task Save(User user)
         {
             if (user == null)
@@ -160,7 +161,7 @@ namespace Xiugou.Entities.Implementations
                 new HashEntry("lastActiveTime", user.LastTimestamp.Ticks)
             });
         }
-        
+
         public async Task<User> GetUserByUserIdAndPlatform(string userId, Platform platform)
         {
             if (string.IsNullOrEmpty(userId))
@@ -191,123 +192,36 @@ namespace Xiugou.Entities.Implementations
                 LastTimestamp = new DateTime(long.Parse(userEntry["lastActiveTime"]))
             };
         }
-        //
-        // public int Save(Session session)
-        // {
-        //     _XiugouDbContext.Sessions.Add(session);
-        //     return _XiugouDbContext.SaveChanges();
-        // }
-        //
-        // public async Task UpdateSessionBySessionId(Session session)
-        // {
-        //     await using var transaction = await _XiugouDbContext.Database.BeginTransactionAsync();
-        //     try
-        //     {
-        //         var entity = await _XiugouDbContext.Sessions
-        //             .SingleOrDefaultAsync(e => e.SessionId == session.SessionId)
-        //             .ConfigureAwait(false);
-        //         entity.IsActive = session.IsActive;
-        //         await _XiugouDbContext.SaveChangesAsync();
-        //         await transaction.CommitAsync();
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         await transaction.RollbackAsync();
-        //         throw new Exception($"Exception when update session status. Exception: {e}");
-        //     }
-        // }
-        //
-        // public async Task<Session> GetMostRecentActiveSessionByAnchorId(string anchorId)
-        // {
-        //     return await _XiugouDbContext.Sessions
-        //         .Where(s => s.AnchorId.Equals(anchorId))
-        //         .Where(s => s.IsActive)
-        //         .OrderByDescending(entity => EF.Property<DateTime>(entity, "CreatedUtc"))
-        //         .FirstAsync().ConfigureAwait(false);
-        // }
+#endregion
 
+#region H5
         public async Task CreateH5Profile(H5Profile profile)
         {
             if (profile == null)
             {
                 throw new ArgumentNullException(nameof(profile));
             }
-        
+
             var db = _ConnectionMultiplexer.GetDatabase();
-        
+
             var serialProfile = JsonSerializer.Serialize(profile);
-        
-           await db.StringSetAsync($"h5:{profile.OpenId}", serialProfile);
+
+            await db.StringSetAsync($"h5:{profile.OpenId}", serialProfile);
         }
-        
+
         public async Task<H5Profile> GetH5ProfileByOpenId(string openId)
         {
             var db = _ConnectionMultiplexer.GetDatabase();
-        
+
             var profile = await db.StringGetAsync($"h5:{openId}");
-        
+
             if (!string.IsNullOrEmpty(profile))
             {
                 return JsonSerializer.Deserialize<H5Profile>(profile);
             }
-        
-            return null;
-        }
-
-        public async Task CreateUser(Platform platform, string userId, string username)
-        {
-            var db = _ConnectionMultiplexer.GetDatabase();
-
-            await db.HashSetAsync($"{platform}:{userId}", new []
-            {
-                new HashEntry("userId", userId),
-                new HashEntry("platform", platform.ToString()),
-                new HashEntry("nickname", username),
-                new HashEntry("ticketId", 0),
-                new HashEntry("messageCount", 1),
-                new HashEntry("totalPay", 0),
-                new HashEntry("totalPayGuest", 0),
-                new HashEntry("joinTimestamp", DateTime.UtcNow.ToString()),
-                new HashEntry("lastTimestamp", DateTime.UtcNow.ToString()),
-            });
-        }
-
-        public async Task<User> GetUserByPlatformAndUserId(Platform platform, string userId)
-        {
-            var db = _ConnectionMultiplexer.GetDatabase();
-
-            // var profile = await db.StringGetAsync($"{platform}:{userId}");
-            var user = await db.HashGetAsync($"{platform}:{userId}", 
-                new RedisValue[]
-                {
-                    "userId",
-                    "platform",
-                    "nickname", 
-                    "ticketId",
-                    "messageCount",
-                    "totalPay",
-                    "totalPayGuest",
-                    "joinTimestamp",
-                    "lastTimestamp"
-                });
-
-            if (user != null)
-            {
-                return new User()
-                {
-                    UserId = user[0],
-                    Platform = (Platform)((int)user[1]),
-                    NickName = user[2],
-                    TicketId = (int)user[3],
-                    MessageCount = (int)user[4],
-                    TotalPay = (int)user[5],
-                    TotalPayGuest = (int)user[6],
-                    JoinTimestamp = DateTime.Parse(user[7]),
-                    LastTimestamp = DateTime.Parse(user[8]),
-                };
-            }
 
             return null;
         }
+#endregion
     }
 }

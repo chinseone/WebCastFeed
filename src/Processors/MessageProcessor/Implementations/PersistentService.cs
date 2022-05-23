@@ -17,8 +17,7 @@ namespace MessageProcessor.Implementations
 
         public async Task ProcessChatMessageAsync(ChatMessage chatMessage)
         {
-            var user = await _XiugouRepository
-                .GetUserByPlatformAndUserId(chatMessage.Platform, chatMessage.UserId);
+            var user = await _XiugouRepository.GetUserByUserIdAndPlatform(chatMessage.UserId, chatMessage.Platform);
 
             if (user == null)
             {
