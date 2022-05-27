@@ -13,6 +13,7 @@ public class StoreChatInformationOperation : IAsyncOperation<MessageBody, bool>
         _XiugouRepository = xiugouRepository ?? throw new ArgumentNullException(nameof(xiugouRepository));
     }
 
+    // To store user data based on chat
     public async ValueTask<bool> ExecuteAsync(MessageBody chatMessage, CancellationToken cancellationToken = default)
     {
         try
