@@ -85,8 +85,7 @@ namespace WebCastFeed.Operations
                     TotalPayGuest = 0,
                     JoinTimestamp = now,
                     LastTimestamp = now,
-                    CreatedUtc = now,
-                    UpdatedUtc = now,
+                    CreatedUtc = now
                 };
             }
             
