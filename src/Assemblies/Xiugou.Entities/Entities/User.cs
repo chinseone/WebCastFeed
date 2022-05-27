@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xiugou.Entities.Enums;
 
 namespace Xiugou.Entities.Entities
@@ -28,6 +29,9 @@ namespace Xiugou.Entities.Entities
 
         // 嘉宾礼物的总付费
         public int TotalPayGuest { get; set; }
+
+        // 道具
+        public List<int> Items { get; set; }
 
         // 初次加入的时间戳
         public DateTime JoinTimestamp { get; set; }
