@@ -36,7 +36,7 @@ namespace MessageProcessor
                 {
                     var request = new ReceiveMessageRequest
                     {
-                        QueueUrl = sqsQueueUrl,
+                        QueueUrl = "",
                         WaitTimeSeconds = 20
                     };
 

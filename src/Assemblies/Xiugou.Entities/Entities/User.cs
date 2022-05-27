@@ -5,8 +5,8 @@ namespace Xiugou.Entities.Entities
 {
     public class User
     {
-        // 数据库自增Id
-        public long Id { get; set; }
+        // 唯一ID
+        public Guid Id { get; set; }
 
         // 直播平台给的uid。不同直播平台的uid可能会串
         public string UserId { get; set; }
@@ -36,7 +36,5 @@ namespace Xiugou.Entities.Entities
         public DateTime LastTimestamp { get; set; }
 
         public DateTime CreatedUtc { get; set; }
-
-        public DateTime UpdatedUtc { get; set; }
     }
 }

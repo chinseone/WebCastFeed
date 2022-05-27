@@ -19,18 +19,12 @@ namespace MessageProcessor.Models
         public string TicketCode { get; set; }
 
         [JsonPropertyName("pay")]
-        public int pay { get; set; }
+        public int Pay { get; set; }
 
         [JsonPropertyName("payGuest")]
         public int PayToGuest { get; set; }
 
         [JsonPropertyName("items")]
         public string Items { get; set; }
-
-        [JsonPropertyName("joinTimestamp")]
-        public DateTime JoinTimestamp { get; set; }
-
-        [JsonPropertyName("lastActiveTimestamp")]
-        public DateTime LastActiveTimestamp { get; set; }
     }
 }

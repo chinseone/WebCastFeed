@@ -17,12 +17,64 @@ namespace MessageProcessor.Implementations
 
         public async Task ProcessChatMessageAsync(ChatMessage chatMessage)
         {
-            var user = await _XiugouRepository.GetUserByUserIdAndPlatform(chatMessage.UserId, chatMessage.Platform);
-
-            if (user == null)
+            try
             {
-                
+                var user = await _XiugouRepository.GetUserByUserIdAndPlatform(chatMessage.UserId, chatMessage.Platform);
+
+                if (user == null)
+                {
+                    await CreateNewUser(chatMessage);
+                    return;
+                }
+
+                await UpdateUserInformation(user, chatMessage);
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private async Task CreateNewUser(ChatMessage chatMessage)
+        {
+            var now = DateTime.UtcNow;
+            var user = new User()
+            {
+                Id = new Guid(),
+                Platform = chatMessage.Platform,
+                UserId = chatMessage.UserId,
+                MessageCount = 1,
+                NickName = chatMessage.Nickname,
+                TicketCode = chatMessage.TicketCode,
+                TotalPay = chatMessage.Pay,
+                TotalPayGuest = chatMessage.PayToGuest,
+                CreatedUtc = now,
+                JoinTimestamp = now,
+                LastTimestamp = now
+            };
+
+            await _XiugouRepository.Save(user);
+        }
+
+        private async Task UpdateUserInformation(User user, ChatMessage chatMessage)
+        {
+            var now = DateTime.UtcNow;
+            var userToUpdate = new User()
+            {
+                Id = user.Id,
+                Platform = chatMessage.Platform,
+                UserId = chatMessage.UserId,
+                MessageCount = user.MessageCount + 1,
+                NickName = chatMessage.Nickname,
+                TicketCode = chatMessage.TicketCode,
+                TotalPay = user.TotalPay + chatMessage.Pay,
+                TotalPayGuest = user.TotalPayGuest + chatMessage.PayToGuest,
+                CreatedUtc = user.CreatedUtc,
+                JoinTimestamp = user.JoinTimestamp,
+                LastTimestamp = now
+            };
+
+            await _XiugouRepository.Save(userToUpdate);
         }
     }
 }
