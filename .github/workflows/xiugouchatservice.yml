@@ -1,0 +1,45 @@
+name: XiugouChatService
+
+on:
+  push:
+    paths:
+      - "src/Services/XiugouChatHub/**"
+      - "src/Assemblies/**"
+      - ".github/workflows/xiugouchatservice.yml"
+  pull_request:
+    paths:
+      - "src/Services/XiugouChatHub/**"
+      - "src/Assemblies/**"
+      - ".github/workflows/xiugouchatservice.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: DEV-TKE-1
+
+    steps:
+      - uses: actions/checkout@v2
+      - id: log
+        run: echo "commitmsg=$(git log --format=%B -n 1 ${{ github.event.after }} | sed -e 's/[^a-zA-Z0-9.-]/-/g' | tr '\n' '#' | sed -e 's/#.*//g' | head -c 100)" >> $GITHUB_ENV
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+      - name: Install dependencies
+        run: dotnet restore ./src/Services/XiugouChatHub/XiugouChatHub.sln
+      - name: Build
+        run: dotnet build ./src/Services/XiugouChatHub/XiugouChatHub.sln --configuration Release --no-restore
+      - name: Tests
+        run: dotnet test ./src/Services/XiugouChatHub/XiugouChatHub.sln --no-restore --verbosity normal
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo $GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Build and push image
+        uses: docker/build-push-action@v1
+        with:
+          username: "${{ secrets.TC_XIUGOU_DOCKER_USERNAME }}"
+          password: "${{ secrets.TC_XIUGOU_DOCKER_PASSWORD  }}"
+          registry: "xiugou-registry.tencentcloudcr.com"
+          repository: "ns-hk/xiugou-repo"
+          dockerfile: "./src/Services/XiugouChatHub/Dockerfile"
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tag_with_sha: true
