@@ -14,6 +14,9 @@ namespace WebCastFeed.Models.Requests
         [JsonPropertyName("nickname")]
         public string Nickname { get; set; }
 
+        [JsonPropertyName("ticketCode")]
+        public string TicketCode { get; set; }
+
         [JsonPropertyName("pay")]
         public int Pay { get; set; }
 
