@@ -75,6 +75,16 @@ namespace WebCastFeed.Controllers
             return Ok(res);
         }
 
+        [HttpPost("launch")]
+        public async Task<IActionResult> OnboardOfficialTickets(
+            [FromServices] OnboardOfficialTicketsOperation operation,
+            CancellationToken cancellationToken)
+        {
+            var res = await _OperationExecutor.ExecuteAsync<OnboardOfficialTicketsOperation,
+                string, bool>(operation, "", cancellationToken);
+            return Ok(res);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetTicketByCode(
             [FromQuery]string code,
