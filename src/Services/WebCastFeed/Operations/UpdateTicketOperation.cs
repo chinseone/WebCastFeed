@@ -42,6 +42,24 @@ namespace WebCastFeed.Operations
             }
             
             var fromState = GetTicketCurrentState(targetTicket);
+
+            if (fromState == TicketState.Activated)
+            {
+                // Check if the ticket belongs to same user
+                var currentUser = await _XiugouRepository.GetUserByUserIdAndPlatform(input.UserId, (Platform)input.Platform);
+                if (currentUser == null || currentUser.TicketCode == null || !currentUser.TicketCode.Equals(input.TicketCode))
+                {
+                    return new UpdateTicketResponse()
+                    {
+                        Success = false,
+                        Platform = input.Platform,
+                        TicketCode = "",
+                        UserId = input.UserId,
+                        Nickname = input.Nickname
+                    };
+                }
+            }
+
             var toTicket = new Ticket()
             {
                 Id = targetTicket.Id,

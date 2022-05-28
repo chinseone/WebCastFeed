@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using StackExchange.Redis;
@@ -92,7 +93,7 @@ namespace Xiugou.Entities.Implementations
             int nextCursor = 0;
             do
             {
-                var redisResult = await db.ExecuteAsync("SCAN", new object[] { nextCursor.ToString(), "MATCH", "tickets*", "COUNT", "1000" });
+                var redisResult = await db.ExecuteAsync("SCAN", new object[] { nextCursor.ToString(), "MATCH", "tickets*", "COUNT", "2000" });
                 var innerResult = (RedisResult[])redisResult;
 
                 nextCursor = int.Parse((string)innerResult[0]);
@@ -222,6 +223,49 @@ namespace Xiugou.Entities.Implementations
 
             return null;
         }
-#endregion
+        #endregion
+
+        // public static async ValueTask KeyDeleteByPatternAsync(
+        //     ConnectionMultiplexer multiplexer,
+        //     RedisValue serverGlob, Regex clientRegex = null,
+        //     int database = -1, int batchSize = 128)
+        // {
+        //     // there may be multiple endpoints behind a multiplexer
+        //     var endpoints = multiplexer.GetEndPoints();
+        //     var db = multiplexer.GetDatabase(database);
+        //     var batch = new List<RedisKey>(batchSize);
+        //
+        //     foreach (var ep in endpoints)
+        //     {
+        //         // SCAN is on the server API per endpoint
+        //         var server = multiplexer.GetServer(ep);
+        //
+        //         // it would be *better* to try and find a single replica per
+        //         // primary and run the SCAN on the replica, but... let's
+        //         // keep it relatively simple
+        //         if (server.IsConnected)
+        //         {
+        //             await foreach (var key in server.Keys(db, "", 2000, 0, 0))
+        //             {
+        //                 if (clientRegex is null || clientRegex.IsMatch(key))
+        //                 {
+        //                     // have match; flush if we've hit the batch size
+        //                     batch.Add(key);
+        //                     if (batch.Count == batchSize) await FlushBatch().ConfigureAwait(false);
+        //                 }
+        //             }
+        //             // make sure we flush per-server so we don't cross shards
+        //             await FlushBatch().ConfigureAwait(false);
+        //         }
+        //     }
+        //
+        //     Task FlushBatch()
+        //     {
+        //         if (batch.Count == 0) return Task.CompletedTask;
+        //         var keys = batch.ToArray();
+        //         batch.Clear();
+        //         return db.KeyDeleteAsync(keys);
+        //     }
+        // }
     }
 }
