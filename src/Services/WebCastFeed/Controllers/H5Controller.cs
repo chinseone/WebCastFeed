@@ -36,7 +36,7 @@ namespace WebCastFeed.Controllers
         => _OperationExecutor.ExecuteAsync<GetH5ProfileOperation,
             string, GetH5ProfileResponse>(operation, openId, cancellationToken);
 
-        [HttpPost("all")]
+        [HttpGet("count")]
         public ValueTask<int> GetAllH5Profiles(
             [FromServices] GetAllH5ProfilesOperation operation,
             CancellationToken cancellationToken)
