@@ -85,7 +85,7 @@ namespace Xiugou.Entities.Implementations
                 new HashEntry("isActivated", ticket.IsActivated)
             });
         }
-        
+
         public async Task<List<Ticket>> GetAllTickets()
         {
             var result = new List<Ticket>();
@@ -222,6 +222,29 @@ namespace Xiugou.Entities.Implementations
             }
 
             return null;
+        }
+
+        public async Task<List<string>> GetAllH5Profiles()
+        {
+            var result = new List<string>();
+            var db = _ConnectionMultiplexer.GetDatabase();
+            int nextCursor = 0;
+            do
+            {
+                var redisResult = await db.ExecuteAsync("SCAN", new object[] { nextCursor.ToString(), "MATCH", "h5*", "COUNT", "1000" });
+                var innerResult = (RedisResult[])redisResult;
+
+                nextCursor = int.Parse((string)innerResult[0]);
+                List<RedisKey> resultLines = ((RedisKey[])innerResult[1]).ToList();
+                foreach (var key in resultLines)
+                {
+                    var h5key = ((string)key);
+                    result.Add(h5key);
+                }
+            }
+            while (nextCursor != 0);
+
+            return result;
         }
         #endregion
 
