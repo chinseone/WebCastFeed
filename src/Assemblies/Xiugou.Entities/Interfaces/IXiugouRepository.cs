@@ -24,5 +24,7 @@ namespace Xiugou.Entities.Entities
         Task CreateH5Profile(H5Profile profile);
         
         Task<H5Profile> GetH5ProfileByOpenId(string openId);
+
+        Task<List<string>> GetAllH5Profiles();
     }
 }
