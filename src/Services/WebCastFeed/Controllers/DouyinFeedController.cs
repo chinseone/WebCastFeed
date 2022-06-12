@@ -61,6 +61,11 @@ namespace WebCastFeed.Controllers
             [FromQuery] string signature = ""
             )
         {
+            if (version.Equals("1"))
+            {
+                return Ok();
+            }
+
             if (SignatureValidator.ValidateSignature(cmd, timestamp, version, push_id, nonce_str, signature, request))
             {
                 await _OperationExecutor.ExecuteAsync<HandleLiveFeedOperation,
