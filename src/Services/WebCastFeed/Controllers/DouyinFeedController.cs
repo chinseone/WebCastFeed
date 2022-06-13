@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using WebCastFeed.Models;
 using WebCastFeed.Models.Requests;
 using WebCastFeed.Models.Response;
@@ -15,10 +17,12 @@ namespace WebCastFeed.Controllers
     public class DouyinFeedController : Controller
     {
         private readonly OperationExecutor _OperationExecutor;
+        private readonly ILogger<DouyinFeedController> _Logger;
 
-        public DouyinFeedController(OperationExecutor operationExecutor)
+        public DouyinFeedController(OperationExecutor operationExecutor, ILogger<DouyinFeedController> logger)
         {
             _OperationExecutor = operationExecutor;
+            _Logger = logger;
         }
 
         [HttpPost("start-game")]
@@ -62,6 +66,7 @@ namespace WebCastFeed.Controllers
             [FromQuery] string signature = ""
             )
         {
+            _Logger.LogInformation($"Received Douyin msg: {request.First().Payload.Content} with version {version}");
             var filteredVersion = Environment.GetEnvironmentVariable("FilteredVersion") ?? "1";
 
             if (version.Equals(filteredVersion))
