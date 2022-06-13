@@ -66,6 +66,7 @@ namespace WebCastFeed.Controllers
             [FromQuery] string signature = ""
             )
         {
+            Console.WriteLine($"Received Douyin msg: {request.First().Payload.Content} with version {version}");
             _Logger.LogInformation($"Received Douyin msg: {request.First().Payload.Content} with version {version}");
             var filteredVersion = Environment.GetEnvironmentVariable("FilteredVersion") ?? "1";
 
