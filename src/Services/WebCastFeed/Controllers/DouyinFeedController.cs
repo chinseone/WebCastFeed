@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,7 +62,9 @@ namespace WebCastFeed.Controllers
             [FromQuery] string signature = ""
             )
         {
-            if (version.Equals("1"))
+            var filteredVersion = Environment.GetEnvironmentVariable("FilteredVersion") ?? "1";
+
+            if (version.Equals(filteredVersion))
             {
                 return Ok();
             }
