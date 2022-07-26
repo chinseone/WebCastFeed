@@ -113,5 +113,21 @@ namespace WebCastFeed.Controllers
                 string, GetTicketByCodeResponse>(operation, code, cancellationToken);
             return Ok(res);
         }
+
+        [HttpPost("reset")]
+        public async Task<IActionResult> ResetAllTickets(
+            [FromServices] ResetAllTicketsOperation operation,
+            CancellationToken cancellationToken)
+        {
+            var res = await _OperationExecutor.ExecuteAsync<ResetAllTicketsOperation,
+                bool, ResetAllTicketsResponse>(operation, true, cancellationToken);
+
+            if (res == null || res.Count == 0)
+            {
+                return Unauthorized("Request is unauthorized");
+            }
+
+            return Ok(res);
+        }
     }
 }
