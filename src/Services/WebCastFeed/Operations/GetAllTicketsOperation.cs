@@ -32,7 +32,8 @@ namespace WebCastFeed.Operations
                     IsActivated = t.IsActivated,
                     IsClaimed = t.IsClaimed,
                     IsDistributed = t.IsDistributed,
-                    TicketType = t.TicketType
+                    TicketType = t.TicketType,
+                    OwnerId = t.OwnerId
                 }).OrderBy(tt => tt.TicketType).ToList();
             }
 

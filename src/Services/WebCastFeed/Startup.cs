@@ -64,6 +64,7 @@ namespace WebCastFeed
             services.AddScoped<OnboardOfficialTicketsOperation>();
             services.AddScoped<GetAllH5ProfilesOperation>();
             services.AddScoped<ResetAllTicketsOperation>();
+            services.AddScoped<AddDefaultOwnerToTicketsOperation>();
         }
 
         private static IWebSocketClient CreateWebSocketClient(CancellationToken cancellationToken)

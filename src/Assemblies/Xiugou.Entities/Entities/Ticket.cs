@@ -13,6 +13,7 @@ namespace Xiugou.Entities.Entities
         public bool IsDistributed { get; set; }
         public bool IsClaimed { get; set; }
         public bool IsActivated { get; set; }
+        public string OwnerId { get; set; }
         public DateTime CreatedUtc { get; set; }
         public DateTime UpdatedUtc { get; set; }
     }
