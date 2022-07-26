@@ -37,10 +37,11 @@ namespace WebCastFeed.Operations
                         Code = ticket.Code,
                         Platform = (Platform)ticket.Platform,
                         Event = (Event)ticket.Event,
-                        IsDistributed = false,
+                        IsDistributed = true,
                         IsClaimed = false,
                         IsActivated = false,
-                        UpdatedUtc = nowUtc
+                        UpdatedUtc = nowUtc,
+                        OwnerId = ticket.OwnerId
                     };
 
                     await _XiugouRepository.UpdateTicket(toTicket);
@@ -53,7 +54,8 @@ namespace WebCastFeed.Operations
                         IsActivated = toTicket.IsActivated,
                         IsClaimed = toTicket.IsClaimed,
                         IsDistributed = toTicket.IsDistributed,
-                        TicketType = toTicket.TicketType
+                        TicketType = toTicket.TicketType,
+                        OwnerId = toTicket.OwnerId
                     });
                 }
             }
