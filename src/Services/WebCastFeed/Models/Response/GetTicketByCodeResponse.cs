@@ -22,5 +22,8 @@ namespace WebCastFeed.Models.Response
 
         [JsonPropertyName("isActivated")]
         public bool IsActivated { get; set; }
+
+        [JsonPropertyName("ownerId")]
+        public string OwnerId { get; set; }
     }
 }

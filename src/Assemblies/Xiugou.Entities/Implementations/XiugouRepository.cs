@@ -53,6 +53,8 @@ namespace Xiugou.Entities.Implementations
             var isClaimed = int.Parse(ticketEntry["isClaimed"]) != 0;
             var isActivated = int.Parse(ticketEntry["isActivated"]) != 0;
 
+            var ownerId = ticketEntry.ContainsKey("ownerId") ? ticketEntry["ownerId"] : "none";
+
             return new Ticket()
             {
                 Code = ticketEntry["code"],
@@ -61,10 +63,25 @@ namespace Xiugou.Entities.Implementations
                 TicketType = ticketType,
                 IsDistributed = isDistributed,
                 IsClaimed = isClaimed,
-                IsActivated = isActivated
+                IsActivated = isActivated,
+                OwnerId = ownerId
             };
         }
-        
+
+        public async Task AddDefaultOwnerIdToTicket(Ticket ticket)
+        {
+            if (ticket == null)
+            {
+                throw new ArgumentNullException(nameof(ticket));
+            }
+
+            var db = _ConnectionMultiplexer.GetDatabase();
+
+            // Syntax: HSETNX KEY_NAME FIELD VALUE
+            await db.ExecuteAsync("HSETNX", $"tickets:{ticket.Code}", "ownerId", "none");
+        }
+
+
         public async Task Save(Ticket ticket)
         {
             if (ticket == null)
@@ -82,7 +99,8 @@ namespace Xiugou.Entities.Implementations
                 new HashEntry("type", (int)ticket.TicketType),
                 new HashEntry("isDistributed", ticket.IsDistributed),
                 new HashEntry("isClaimed", ticket.IsClaimed),
-                new HashEntry("isActivated", ticket.IsActivated)
+                new HashEntry("isActivated", ticket.IsActivated),
+                new HashEntry("ownerId", "none")
             });
         }
 
