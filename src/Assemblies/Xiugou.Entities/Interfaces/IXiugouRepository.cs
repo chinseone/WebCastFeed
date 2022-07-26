@@ -15,6 +15,8 @@ namespace Xiugou.Entities.Entities
         
         Task UpdateTicket(Ticket ticket);
 
+        Task AddDefaultOwnerIdToTicket(Ticket ticket);
+
         // User
         Task Save(User user);
         

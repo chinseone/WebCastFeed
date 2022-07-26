@@ -39,6 +39,17 @@ namespace WebCastFeed.Controllers
             return Ok(res);
         }
 
+        [HttpPost("default-owner")]
+        [Consumes("application/json")]
+        public IActionResult AddDefaultOwnerToTicket(
+            [FromServices] AddDefaultOwnerToTicketsOperation operation,
+            CancellationToken cancellationToken)
+        {
+            var res = _OperationExecutor.ExecuteAsync<AddDefaultOwnerToTicketsOperation,
+                string, string>(operation, string.Empty, cancellationToken);
+            return Ok(res);
+        }
+
         [HttpPost("state")]
         [Consumes("application/json")]
         public async Task<IActionResult> UpdateTicket(
