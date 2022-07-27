@@ -151,7 +151,8 @@ namespace Xiugou.Entities.Implementations
                 new HashEntry("type", ticketEntry["type"]),
                 new HashEntry("isDistributed", ticket.IsDistributed),
                 new HashEntry("isClaimed", ticket.IsClaimed),
-                new HashEntry("isActivated", ticket.IsActivated)
+                new HashEntry("isActivated", ticket.IsActivated),
+                new HashEntry("ownerId", ticket.OwnerId),
             });
 
         }
