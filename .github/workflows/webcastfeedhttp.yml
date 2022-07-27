@@ -38,7 +38,7 @@ jobs:
         with:
           username: "${{ secrets.TC_XIUGOU_DOCKER_USERNAME }}"
           password: "${{ secrets.TC_XIUGOU_DOCKER_PASSWORD  }}"
-          registry: "xiugou-registry.tencentcloudcr.com"
+          registry: "xiugou-image-repo.tencentcloudcr.com"
           repository: "ns-hk/xiugou-repo"
           dockerfile: "./src/Services/WebCastFeed/Dockerfile"
           push: ${{ github.ref == 'refs/heads/main' }}
