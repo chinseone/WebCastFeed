@@ -152,6 +152,23 @@ namespace WebCastFeed.Operations
                 {
                     if (targetTicket.OwnerId.Equals(currentUser.UserId))
                     {
+                        var now  = DateTime.UtcNow;
+                        var toTicket = new Ticket()
+                        {
+                            Id = targetTicket.Id,
+                            Code = targetTicket.Code,
+                            Platform = (Platform)input.Platform,
+                            Event = (Event)input.Event,
+                            IsDistributed = targetTicket.IsDistributed || input.IsDistributed,
+                            IsClaimed = targetTicket.IsClaimed || input.IsClaimed,
+                            IsActivated = true,
+                            CreatedUtc = targetTicket.CreatedUtc,
+                            OwnerId = currentUser.UserId,
+                            UpdatedUtc = now
+                        };
+
+                        await _XiugouRepository.UpdateTicket(toTicket);
+
                         return new UpdateTicketResponse()
                         {
                             Success = true,
